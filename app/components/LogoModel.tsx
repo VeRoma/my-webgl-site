@@ -18,15 +18,19 @@ export function LogoModel() {
                 // mesh.rotation.x = -Math.PI / 2
                 // mesh.rotation.y = Math.PI / 2
 
-                // Создаем крутой материал "Кибер-металл"
-                mesh.material = new THREE.MeshStandardMaterial({
-                    color: '#1a1a1a',     // Темная основа
-                    roughness: 0.1,       // Почти зеркальный (0 - зеркало, 1 - матовый)
-                    metalness: 0.9,       // Очень металлический
-                    emissive: '#00ffff',  // Легкое свечение (цвет циана)
-                    emissiveIntensity: 0.2 // Сила свечения (поиграй с этим числом: 0 = выкл)
-                })
+                mesh.material = new THREE.MeshPhysicalMaterial({
+                    color: '#000000',        // Абсолютно черный цвет
+                    roughness: 0.15,         // Немного матовый, чтобы блики "растекались"
+                    metalness: 0.9,          // 100% металл
 
+                    // Убираем собственное свечение, пусть работает внешний свет!
+                    emissive: '#00ccff',
+                    emissiveIntensity: 0.3,
+
+                    // Добавляем слой "лака" для двойных бликов
+                    clearcoat: 1.0,
+                    clearcoatRoughness: 0.1
+                })
                 mesh.castShadow = true
                 mesh.receiveShadow = true
             }
