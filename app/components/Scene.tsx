@@ -7,73 +7,92 @@ import { Suspense } from 'react'
 import * as THREE from 'three'
 
 import { LogoModel } from './LogoModel'
+import { GlobeModel } from './GlobeModel'
+import { GlobeGrid } from './GlobeGrid'
 import { EnvironmentSetup } from './EnvironmentSetup'
 import { Lights } from './Lights'
 import { Platform } from './Platform'
+import { CodeBackground } from './CodeBackground'
 
-// Импортируем наш контекст
 import { QualityProvider, useQuality } from '../context/QualityContext'
 import { QualityUI } from './QualityUI'
 
-import { CodeBackground } from './CodeBackground' // <-- Импортируем
-
-// Вынесли содержимое Canvas в отдельный компонент, 
-// чтобы он мог использовать хук useQuality (который должен быть внутри провайдера)
 function SceneContent() {
-    const { dpr, shadows, postProcessing } = useQuality()
+    const { mode, dpr, shadows, postProcessing } = useQuality()
 
     return (
-        <>
-            <Canvas
-                shadows={shadows}
-                dpr={dpr}
-                camera={{ position: [0, -1, 4], fov: 50 }}
-                gl={{ antialias: false }}
-            >
-                <Lights />
-                <EnvironmentSetup />
-                <Sparkles count={50} scale={5} size={4} speed={0.4} opacity={0.5} color="#00ffff" />
-                <Platform />
+        <Canvas
+            shadows={shadows}
+            dpr={dpr}
+            camera={{ position: [0, -1, 4], fov: 50 }}
+            gl={{ antialias: mode === 'low' }}
+        >
+            <Lights />
+            <EnvironmentSetup />
 
-                <CodeBackground />
-                
-                <Suspense fallback={null}>
-                    <group position={[0, -1.2, 0]} rotation={[0, -Math.PI / 2, 0]}>
+            <Sparkles
+                count={50}
+                scale={5}
+                size={4}
+                speed={0.4}
+                opacity={0.5}
+                color="#00ffff"
+                transparent={true}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+
+            <CodeBackground />
+            <Platform />
+
+            <Suspense fallback={null}>
+                <group position={[0, -1.6, 0]}>
+                    <group rotation={[0, -Math.PI / 2, 0]} position={[0.1, 0, 0.35]}>
                         <LogoModel />
                     </group>
-                </Suspense>
 
-                {shadows && (
-                    <ContactShadows position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
-                )}
+                    <group position={[0, 0.4, 0]}>
+                        <GlobeModel />
+                        <GlobeGrid />
+                    </group>
+                </group>
+            </Suspense>
 
-                <OrbitControls target={[0, -1.2, 0]} maxPolarAngle={Math.PI / 2} />
+            {shadows && (
+                <ContactShadows position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
+            )}
 
-                {/* Исправленный блок эффектов: без лишних комментариев внутри тега */}
-                {postProcessing && (
-                    <EffectComposer>
-                        <Bloom
-                            luminanceThreshold={0.7}
-                            mipmapBlur
-                            intensity={0.4}
-                            radius={0.3}
-                        />
-                        <ChromaticAberration
-                            offset={new THREE.Vector2(0.001, 0.001)}
-                        />
-                    </EffectComposer>
-                )}
+            <OrbitControls
+                enableZoom={true}
+                target={[0, -1.6, 0]}
+                maxPolarAngle={Math.PI / 2}
+            />
 
-                <Stats />
-            </Canvas>
-        </>
+            {postProcessing && (
+                <EffectComposer>
+                    {/* ВОЗВРАЩАЕМ ЦВЕТ ЛОГОТИПА */}
+                    <Bloom
+                        // Было 0.1 -> Стало 0.8. 
+                        // Теперь светится только реальный неон, а металл остается темным и цветным.
+                        luminanceThreshold={0.8}
+                        mipmapBlur
+                        intensity={1.0}
+                        radius={0.6}
+                    />
+                    <ChromaticAberration
+                        offset={new THREE.Vector2(0.0005, 0.0005)}
+                    />
+                </EffectComposer>
+            )}
+
+            <Stats />
+        </Canvas>
     )
 }
 
 export default function Scene() {
     return (
         <div className="h-screen w-full bg-black">
-            {/* Оборачиваем все в провайдер */}
             <QualityProvider>
                 <QualityUI />
                 <SceneContent />
