@@ -29,6 +29,6 @@ export function EnvironmentSetup() {
 
     return (
         // files="/studio.hdr" — убедись, что файл лежит в public
-        <Environment files="/city-sh.hdr" background={true} />
+        <Environment files="/city-sh.hdr" background={false} />
     )
 }
