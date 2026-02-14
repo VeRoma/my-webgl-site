@@ -37,9 +37,7 @@ function SceneContent() {
                 speed={0.4}
                 opacity={0.5}
                 color="#00ffff"
-                transparent={true}
-                depthWrite={false}
-                blending={THREE.AdditiveBlending}
+               
             />
 
             <CodeBackground />
