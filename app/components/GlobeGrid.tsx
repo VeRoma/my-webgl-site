@@ -19,7 +19,7 @@ export function GlobeGrid() {
     const neonColor = new THREE.Color(0, 10, 40)
 
     return (
-        <mesh ref={meshRef} scale={1 }>    //
+        <mesh ref={meshRef} scale={1}>
             {/* Геометрия-болванка */}
             <sphereGeometry args={[1, 36, 18]} />
             <meshBasicMaterial visible={false} />

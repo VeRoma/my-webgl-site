@@ -2,7 +2,7 @@
 
 import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { useRef, useMemo } from 'react' // убрал useState, он не использовался
+import { useRef, useMemo } from 'react'
 import * as THREE from 'three'
 import { useQuality } from '../context/QualityContext'
 
@@ -19,7 +19,8 @@ const SNIPPETS = [
     "interface Props { position: [number, number, number] }"
 ]
 
-function CodeColumn({ x, z, speed, opacity }: { x: number, z: number, speed: number, opacity: number }) {
+// Добавили 'y' в пропсы
+function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: number, speed: number, opacity: number }) {
     const group = useRef<THREE.Group>(null)
 
     const text = useMemo(() => {
@@ -30,20 +31,24 @@ function CodeColumn({ x, z, speed, opacity }: { x: number, z: number, speed: num
 
     useFrame((state, delta) => {
         if (!group.current) return
+
+        // Двигаем вверх
         group.current.position.y += speed * delta
-        if (group.current.position.y > 5) {
-            group.current.position.y = -10
+
+        // Если улетел слишком высоко (выше верхней границы экрана)
+        if (group.current.position.y > 12) {
+            // Сбрасываем глубоко вниз
+            group.current.position.y = -15
         }
     })
 
     return (
-        <group ref={group} position={[x, -10, z]}>
+        // position использует переданный стартовый Y
+        <group ref={group} position={[x, y, z]}>
             <Text
                 color="#00ffff"
                 fontSize={0.25}
-                // ВАЖНО: Ссылка теперь ведет на локальный файл в папке public
-                // Если лень качать файл, просто удали строчку font="..." — будет стандартный шрифт
-                font="/RobotoMono-Regular.ttf"
+                font="/RobotoMono-Regular.ttf" // Убедись, что шрифт есть в public, или удали эту строку
                 anchorX="center"
                 anchorY="middle"
                 letterSpacing={-0.05}
@@ -59,16 +64,19 @@ function CodeColumn({ x, z, speed, opacity }: { x: number, z: number, speed: num
 export function CodeBackground() {
     const { mode } = useQuality()
 
-    // 1. СНАЧАЛА вызываем все хуки
+    // Настроили координаты:
+    // y: разные значения, чтобы код был везде
+    // z: большие отрицательные значения (-8 ... -15), чтобы быть дальше
     const columns = useMemo(() => [
-        { x: -4, z: -2, speed: 0.5, opacity: 0.15 },
-        { x: -2.5, z: -3, speed: 0.8, opacity: 0.1 },
-        { x: 2.5, z: -3, speed: 0.7, opacity: 0.1 },
-        { x: 4, z: -2, speed: 0.4, opacity: 0.15 },
-        { x: 0, z: -4, speed: 0.3, opacity: 0.05 },
+        { x: -5, y: 0, z: -8, speed: 0.5, opacity: 0.15 },
+        { x: -3, y: -8, z: -10, speed: 0.8, opacity: 0.1 },
+        { x: 3, y: 5, z: -12, speed: 0.7, opacity: 0.1 },
+        { x: 6, y: -3, z: -9, speed: 0.4, opacity: 0.15 },
+        { x: 0, y: -10, z: -15, speed: 0.3, opacity: 0.05 },
+        { x: -7, y: 8, z: -11, speed: 0.6, opacity: 0.08 },
+        { x: 4, y: -12, z: -14, speed: 0.5, opacity: 0.08 },
     ], [])
 
-    // 2. И ТОЛЬКО ПОТОМ делаем проверку и return
     if (mode === 'low') return null
 
     return (
