@@ -4,23 +4,23 @@ import { LogoModel } from './LogoModel'
 import { GlobeModel } from './GlobeModel'
 import { GlobeGrid } from './GlobeGrid'
 import { HeroRig } from './HeroRig'
-import { useIntro } from './context/IntroContext'
+import { useIntro } from './context/IntroContext' // Импорт контекста
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import * as THREE from 'three'
 
 export function HeroAsset() {
+    // Получаем состояние: загрузилась система или нет?
     const { booted } = useIntro()
     const group = useRef<THREE.Group>(null)
 
     useFrame((state, delta) => {
         if (!group.current) return
 
-        // Целевой масштаб: если загрузились -> 1, иначе -> 0
+        // Если booted = true, масштаб -> 1. Если false -> 0.
         const targetScale = booted ? 1 : 0
 
-        // Плавная интерполяция (Lerp). 
-        // Скорость 4 * delta дает приятный "вязкий" эффект появления.
+        // Плавная анимация (Lerp)
         const currentScale = group.current.scale.x
         const nextScale = THREE.MathUtils.lerp(currentScale, targetScale, 4 * delta)
 

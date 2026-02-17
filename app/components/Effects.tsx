@@ -8,16 +8,13 @@ import { useQuality } from '../context/QualityContext'
 export function Effects() {
     const { postProcessing } = useQuality()
 
+    // Создаем вектор один раз
     const aberrationOffset = useMemo(() => new THREE.Vector2(0.0005, 0.0005), [])
 
     if (!postProcessing) return null
 
     return (
-        <EffectComposer
-            // @ts-ignore
-            disableNormalPass
-            multisampling={0}
-        >
+        <EffectComposer>
             <Bloom
                 luminanceThreshold={0.8}
                 mipmapBlur

@@ -1,13 +1,12 @@
 'use client'
 
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, ContactShadows, Stats } from '@react-three/drei' // Убрали лишний Sparkles
+import { OrbitControls, ContactShadows, Stats } from '@react-three/drei'
 import { Suspense } from 'react'
 import * as THREE from 'three'
 
-// Импортируем наши новые компоненты
 import { HeroAsset } from './HeroAsset'
-import { Effects } from './Effects'
+// import { Effects } from './Effects' <--- УБРАЛИ ИМПОРТ
 import { EnvironmentSetup } from './EnvironmentSetup'
 import { Lights } from './Lights'
 import { Platform } from './Platform'
@@ -25,29 +24,24 @@ function SceneContent() {
             shadows={shadows}
             dpr={dpr}
             camera={{ position: [0, -1, 4], fov: 50 }}
-            // ВАЖНО: Вернули toneMapping, чтобы цвета были правильными!
             gl={{
-                antialias: false, // Для EffectComposer лучше выключать родной antialias
+                // Возвращаем дефолтные настройки для стабильности
+                antialias: true,
                 toneMapping: THREE.NoToneMapping,
-                alpha: true,
-                stencil: false,
-                depth: true
+                // alpha: true // Можно не указывать, по умолчанию true
             }}
         >
-            {/* 1. Окружение и Свет */}
             <Lights />
             <EnvironmentSetup />
             <StarsBackground />
             <CodeBackground />
 
-            {/* 2. Объекты сцены */}
             <Platform />
 
             <Suspense fallback={null}>
                 <HeroAsset />
             </Suspense>
 
-            {/* 3. Тени и Управление */}
             {shadows && (
                 <ContactShadows position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
             )}
@@ -58,8 +52,7 @@ function SceneContent() {
                 maxPolarAngle={Math.PI / 2}
             />
 
-            {/* 4. Пост-обработка (вынесена в отдельный файл) */}
-            <Effects />
+            {/* <Effects /> <--- УБРАЛИ КОМПОНЕНТ, ЧТОБЫ НЕ КРАШИЛ САЙТ */}
 
             <Stats />
         </Canvas>
@@ -68,6 +61,7 @@ function SceneContent() {
 
 export default function Scene() {
     return (
+        // Убедись, что bg-black здесь есть, иначе экран может быть белым
         <div className="h-screen w-full bg-black">
             <QualityProvider>
                 <QualityUI />
