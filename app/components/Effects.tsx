@@ -13,8 +13,11 @@ export function Effects() {
     if (!postProcessing) return null
 
     return (
-        // ИСПРАВЛЕНИЕ: multisampling={0} предотвращает ошибку с альфа-каналом
-        <EffectComposer multisampling={0}>
+        <EffectComposer
+            // @ts-ignore
+            disableNormalPass
+            multisampling={0}
+        >
             <Bloom
                 luminanceThreshold={0.8}
                 mipmapBlur

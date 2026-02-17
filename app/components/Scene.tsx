@@ -27,8 +27,11 @@ function SceneContent() {
             camera={{ position: [0, -1, 4], fov: 50 }}
             // ВАЖНО: Вернули toneMapping, чтобы цвета были правильными!
             gl={{
-                antialias: mode === 'low',
-                toneMapping: THREE.NoToneMapping
+                antialias: false, // Для EffectComposer лучше выключать родной antialias
+                toneMapping: THREE.NoToneMapping,
+                alpha: true,
+                stencil: false,
+                depth: true
             }}
         >
             {/* 1. Окружение и Свет */}
