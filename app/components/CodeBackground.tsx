@@ -65,18 +65,16 @@ function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: numb
     const group = useRef<THREE.Group>(null)
 
     const text = useMemo(() => {
-        return Array.from({ length: 15 })
+        return Array.from({ length: 10 })
             .map(() => SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)])
             .join('\n')
     }, [])
 
     useFrame((state, delta) => {
         if (!group.current) return
-
         group.current.position.y += speed * delta
-
-        if (group.current.position.y > 15) {
-            group.current.position.y = -20
+        if (group.current.position.y > 12) {
+            group.current.position.y = -15
         }
     })
 
@@ -84,12 +82,12 @@ function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: numb
         <group ref={group} position={[x, y, z]}>
             <Text
                 color="#00ffff"
-                fontSize={0.2}
-                font="/RobotoMono-Regular.ttf"
+                fontSize={0.25}
+                // font="/RobotoMono-Regular.ttf" <--- УДАЛИЛИ ЭТУ СТРОКУ! (Причина краша)
                 anchorX="center"
                 anchorY="middle"
                 letterSpacing={-0.05}
-                lineHeight={1.4}
+                lineHeight={1.5}
                 fillOpacity={opacity}
             >
                 {text}
@@ -100,20 +98,18 @@ function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: numb
 
 export function CodeBackground() {
     const { mode } = useQuality()
-    const { booted } = useIntro() // <-- Получаем статус загрузки
 
     const columns = useMemo(() => [
-        { x: -6, y: 0, z: -8, speed: 0.5, opacity: 0.12 },
-        { x: -4, y: -10, z: -10, speed: 0.7, opacity: 0.08 },
-        { x: -2, y: 5, z: -12, speed: 0.3, opacity: 0.05 },
-        { x: 0, y: -5, z: -14, speed: 0.4, opacity: 0.04 },
-        { x: 2, y: 8, z: -11, speed: 0.6, opacity: 0.06 },
-        { x: 4, y: -2, z: -9, speed: 0.5, opacity: 0.1 },
-        { x: 6, y: -12, z: -8, speed: 0.8, opacity: 0.12 },
+        { x: -5, y: 0, z: -8, speed: 0.5, opacity: 0.15 },
+        { x: -3, y: -8, z: -10, speed: 0.8, opacity: 0.1 },
+        { x: 3, y: 5, z: -12, speed: 0.7, opacity: 0.1 },
+        { x: 6, y: -3, z: -9, speed: 0.4, opacity: 0.15 },
+        { x: 0, y: -10, z: -15, speed: 0.3, opacity: 0.05 },
+        { x: -7, y: 8, z: -11, speed: 0.6, opacity: 0.08 },
+        { x: 4, y: -12, z: -14, speed: 0.5, opacity: 0.08 },
     ], [])
 
-    // Если режим Low ИЛИ система еще не загрузилась — скрываем код
-    if (mode === 'low' || !booted) return null
+    if (mode === 'low') return null
 
     return (
         <>

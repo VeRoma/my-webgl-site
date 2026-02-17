@@ -6,7 +6,7 @@ import { Suspense } from 'react'
 import * as THREE from 'three'
 
 import { HeroAsset } from './HeroAsset'
-// import { Effects } from './Effects' <--- УБРАЛИ ИМПОРТ
+import { Effects } from './Effects'
 import { EnvironmentSetup } from './EnvironmentSetup'
 import { Lights } from './Lights'
 import { Platform } from './Platform'
@@ -25,15 +25,27 @@ function SceneContent() {
             dpr={dpr}
             camera={{ position: [0, -1, 4], fov: 50 }}
             gl={{
-                // Возвращаем дефолтные настройки для стабильности
                 antialias: true,
-                toneMapping: THREE.NoToneMapping,
-                // alpha: true // Можно не указывать, по умолчанию true
+                toneMapping: THREE.ACESFilmicToneMapping, // Для красивого света
+                toneMappingExposure: 1.0,
+            }}
+            onCreated={(state) => {
+                state.gl.setClearColor('#000000') // Гарантия черного
             }}
         >
+            <color attach="background" args={['#000000']} />
+            <fog attach="fog" args={['#000000', 5, 20]} />
+
             <Lights />
-            <EnvironmentSetup />
+
+            {/* ВАЖНО: Suspense спасает от белого экрана при загрузке HDR */}
+            <Suspense fallback={null}>
+                <EnvironmentSetup />
+            </Suspense>
+
             <StarsBackground />
+
+            {/* Теперь безопасно, так как шрифт исправлен */}
             <CodeBackground />
 
             <Platform />
@@ -52,8 +64,6 @@ function SceneContent() {
                 maxPolarAngle={Math.PI / 2}
             />
 
-            {/* <Effects /> <--- УБРАЛИ КОМПОНЕНТ, ЧТОБЫ НЕ КРАШИЛ САЙТ */}
-
             <Stats />
         </Canvas>
     )
@@ -61,7 +71,6 @@ function SceneContent() {
 
 export default function Scene() {
     return (
-        // Убедись, что bg-black здесь есть, иначе экран может быть белым
         <div className="h-screen w-full bg-black">
             <QualityProvider>
                 <QualityUI />
