@@ -1,12 +1,9 @@
 'use client'
 
-import { Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef, useMemo } from 'react'
 import * as THREE from 'three'
 import { useQuality } from '../context/QualityContext'
-import { useIntro } from './context/IntroContext'
-
 
 const SNIPPETS = [
     "import { Canvas, useFrame } from '@react-three/fiber'",
@@ -61,38 +58,77 @@ const SNIPPETS = [
     "export interface State { count: number; theme: 'dark' | 'light' }"
 ]
 
-function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: number, speed: number, opacity: number }) {
-    const group = useRef<THREE.Group>(null)
+// Функция для генерации текстуры с кодом "на лету" через обычный Canvas API
+function createCodeTexture(): THREE.CanvasTexture | null {
+    if (typeof document === 'undefined') return null;
 
-    const text = useMemo(() => {
-        return Array.from({ length: 10 })
-            .map(() => SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)])
-            .join('\n')
-    }, [])
+    const canvas = document.createElement('canvas');
+    // Размер текстуры (достаточно высокий для четкости)
+    canvas.width = 512;
+    canvas.height = 1024;
+
+    const context = canvas.getContext('2d');
+    if (!context) return null;
+
+    // Прозрачный фон
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Настройки шрифта (обычный системный моноширинный шрифт)
+    context.font = 'bold 20px "Courier New", monospace';
+    context.fillStyle = '#00ffff'; // Цвет текста
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    // Заполняем холст случайными строчками
+    const lineHeight = 40;
+    const linesCount = Math.floor(canvas.height / lineHeight);
+
+    for (let i = 0; i < linesCount; i++) {
+        const text = SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)];
+        // Добавляем случайный отступ для красоты
+        const x = canvas.width / 2;
+        const y = i * lineHeight + lineHeight / 2;
+        context.fillText(text, x, y);
+    }
+
+    const texture = new THREE.CanvasTexture(canvas);
+    return texture;
+}
+
+function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: number, speed: number, opacity: number }) {
+    const mesh = useRef<THREE.Mesh>(null)
+
+    // Создаем уникальную текстуру для каждой колонки один раз при загрузке
+    const texture = useMemo(() => createCodeTexture(), [])
 
     useFrame((state, delta) => {
-        if (!group.current) return
-        group.current.position.y += speed * delta
-        if (group.current.position.y > 12) {
-            group.current.position.y = -15
+        if (!mesh.current) return
+        // Двигаем вверх
+        mesh.current.position.y += speed * delta
+
+        // Зацикливание по вертикали
+        if (mesh.current.position.y > 15) {
+            mesh.current.position.y = -15
         }
     })
 
+    if (!texture) return null;
+
     return (
-        <group ref={group} position={[x, y, z]}>
-            <Text
-                color="#00ffff"
-                fontSize={0.25}
-                // font="/RobotoMono-Regular.ttf" <--- УДАЛИЛИ ЭТУ СТРОКУ! (Причина краша)
-                anchorX="center"
-                anchorY="middle"
-                letterSpacing={-0.05}
-                lineHeight={1.5}
-                fillOpacity={opacity}
-            >
-                {text}
-            </Text>
-        </group>
+        <mesh ref={mesh} position={[x, y, z]}>
+            {/* Простой прямоугольник (Plane) вместо сложной 3D-геометрии текста.
+                Размеры [5, 10] подобраны под пропорции канваса (1:2).
+            */}
+            <planeGeometry args={[5, 10]} />
+            <meshBasicMaterial
+                map={texture}
+                transparent
+                opacity={opacity}
+                side={THREE.DoubleSide}
+                depthWrite={false} // Чтобы не перекрывать другие прозрачные объекты
+                blending={THREE.AdditiveBlending} // Режим наложения для "свечения"
+            />
+        </mesh>
     )
 }
 
