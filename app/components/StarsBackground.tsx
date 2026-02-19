@@ -1,7 +1,7 @@
 'use client'
 
 import { Sparkles } from '@react-three/drei'
-import { useIntro } from './context/IntroContext'
+import { useIntro } from '../context/IntroContext'
 
 
 export function StarsBackground() {

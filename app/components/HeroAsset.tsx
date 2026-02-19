@@ -4,7 +4,7 @@ import { LogoModel } from './LogoModel'
 import { GlobeModel } from './GlobeModel'
 import { GlobeGrid } from './GlobeGrid'
 import { HeroRig } from './HeroRig'
-import { useIntro } from './context/IntroContext' // Оставил твой путь
+import { useIntro } from '../context/IntroContext'
 import { useFrame } from '@react-three/fiber'
 import { useRef, useEffect } from 'react'
 import * as THREE from 'three'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useIntro } from './context/IntroContext'
+import { useIntro } from '../context/IntroContext'
 import { useQuality } from '../context/QualityContext'
 import { useProgress } from '@react-three/drei'
 import { getGPUTier } from 'detect-gpu'
