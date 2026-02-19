@@ -59,7 +59,8 @@ function SceneContent() {
             </Suspense>
 
             {shadows && (
-                <ContactShadows position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
+                // <ContactShadows position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
+                <ContactShadows frames={1} position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
             )}
 
             <OrbitControls enableZoom={true} target={[0, -1.6, 0]} maxPolarAngle={Math.PI / 2} />

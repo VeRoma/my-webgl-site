@@ -13,6 +13,7 @@
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
     "@types/three": "^0.182.0",
+    "detect-gpu": "^5.0.70",
     "next": "16.1.6",
     "postprocessing": "^6.38.2",
     "react": "19.2.3",

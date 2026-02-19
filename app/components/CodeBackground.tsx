@@ -58,75 +58,56 @@ const SNIPPETS = [
     "export interface State { count: number; theme: 'dark' | 'light' }"
 ]
 
-// Функция для генерации текстуры с кодом "на лету" через обычный Canvas API
+
+
 function createCodeTexture(): THREE.CanvasTexture | null {
     if (typeof document === 'undefined') return null;
-
     const canvas = document.createElement('canvas');
-    // Размер текстуры (достаточно высокий для четкости)
     canvas.width = 512;
     canvas.height = 1024;
 
     const context = canvas.getContext('2d');
     if (!context) return null;
 
-    // Прозрачный фон
     context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Настройки шрифта (обычный системный моноширинный шрифт)
     context.font = 'bold 20px "Courier New", monospace';
-    context.fillStyle = '#00ffff'; // Цвет текста
+    context.fillStyle = '#00ffff';
     context.textAlign = 'center';
     context.textBaseline = 'middle';
 
-    // Заполняем холст случайными строчками
     const lineHeight = 40;
     const linesCount = Math.floor(canvas.height / lineHeight);
 
     for (let i = 0; i < linesCount; i++) {
         const text = SNIPPETS[Math.floor(Math.random() * SNIPPETS.length)];
-        // Добавляем случайный отступ для красоты
-        const x = canvas.width / 2;
-        const y = i * lineHeight + lineHeight / 2;
-        context.fillText(text, x, y);
+        context.fillText(text, canvas.width / 2, i * lineHeight + lineHeight / 2);
     }
 
-    const texture = new THREE.CanvasTexture(canvas);
-    return texture;
+    return new THREE.CanvasTexture(canvas);
 }
 
-function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: number, speed: number, opacity: number }) {
+// ПРИНИМАЕМ текстуру как проп!
+function CodeColumn({ x, y, z, speed, opacity, texture }: { x: number, y: number, z: number, speed: number, opacity: number, texture: THREE.CanvasTexture }) {
     const mesh = useRef<THREE.Mesh>(null)
 
-    // Создаем уникальную текстуру для каждой колонки один раз при загрузке
-    const texture = useMemo(() => createCodeTexture(), [])
-
-    useFrame((state, delta) => {
+    useFrame((_, delta) => {
         if (!mesh.current) return
-        // Двигаем вверх
         mesh.current.position.y += speed * delta
-
-        // Зацикливание по вертикали
         if (mesh.current.position.y > 15) {
             mesh.current.position.y = -15
         }
     })
 
-    if (!texture) return null;
-
     return (
         <mesh ref={mesh} position={[x, y, z]}>
-            {/* Простой прямоугольник (Plane) вместо сложной 3D-геометрии текста.
-                Размеры [5, 10] подобраны под пропорции канваса (1:2).
-            */}
             <planeGeometry args={[5, 10]} />
             <meshBasicMaterial
                 map={texture}
                 transparent
                 opacity={opacity}
                 side={THREE.DoubleSide}
-                depthWrite={false} // Чтобы не перекрывать другие прозрачные объекты
-                blending={THREE.AdditiveBlending} // Режим наложения для "свечения"
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
             />
         </mesh>
     )
@@ -134,6 +115,9 @@ function CodeColumn({ x, y, z, speed, opacity }: { x: number, y: number, z: numb
 
 export function CodeBackground() {
     const { mode } = useQuality()
+
+    // ГЕНЕРИРУЕМ ТЕКСТУРУ 1 РАЗ ДЛЯ ВСЕХ! Это спасет FPS.
+    const sharedTexture = useMemo(() => createCodeTexture(), [])
 
     const columns = useMemo(() => [
         { x: -5, y: 0, z: -8, speed: 0.5, opacity: 0.15 },
@@ -145,12 +129,12 @@ export function CodeBackground() {
         { x: 4, y: -12, z: -14, speed: 0.5, opacity: 0.08 },
     ], [])
 
-    if (mode === 'low') return null
+    if (mode === 'low' || !sharedTexture) return null
 
     return (
         <>
             {columns.map((col, i) => (
-                <CodeColumn key={i} {...col} />
+                <CodeColumn key={i} {...col} texture={sharedTexture} />
             ))}
         </>
     )

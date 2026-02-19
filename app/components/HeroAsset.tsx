@@ -27,19 +27,21 @@ export function HeroAsset() {
 
     return (
         <group position={[0, -1.6, 0]}>
-            <HeroRig>
-                {/* Начальный масштаб 0, потом вырастет */}
+            
                 <group ref={group} scale={[0, 0, 0]}>
+            <HeroRig>
                     <group rotation={[0, -Math.PI / 2, 0]} position={[0.1, 0, 0.35]}>
                         <LogoModel />
                     </group>
-
+            </HeroRig>
                     <group position={[0, 0.4, 0]}>
                         <GlobeModel />
                         <GlobeGrid />
                     </group>
                 </group>
-            </HeroRig>
+            
+
+            
         </group>
     )
 }
