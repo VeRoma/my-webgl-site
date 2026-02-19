@@ -1,9 +1,10 @@
 'use client'
 
 import { useFrame } from '@react-three/fiber'
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useEffect } from 'react'
 import * as THREE from 'three'
 import { useQuality } from '../context/QualityContext'
+import { useIntro } from '../context/IntroContext'
 
 const SNIPPETS = [
     "import { Canvas, useFrame } from '@react-three/fiber'",
@@ -58,8 +59,6 @@ const SNIPPETS = [
     "export interface State { count: number; theme: 'dark' | 'light' }"
 ]
 
-
-
 function createCodeTexture(): THREE.CanvasTexture | null {
     if (typeof document === 'undefined') return null;
     const canvas = document.createElement('canvas');
@@ -86,15 +85,22 @@ function createCodeTexture(): THREE.CanvasTexture | null {
     return new THREE.CanvasTexture(canvas);
 }
 
-// ПРИНИМАЕМ текстуру как проп!
-function CodeColumn({ x, y, z, speed, opacity, texture }: { x: number, y: number, z: number, speed: number, opacity: number, texture: THREE.CanvasTexture }) {
+function CodeColumn({ x, y, z, speed, opacity, texture, entered }: { x: number, y: number, z: number, speed: number, opacity: number, texture: THREE.CanvasTexture, entered: boolean }) {
     const mesh = useRef<THREE.Mesh>(null)
+    const mat = useRef<THREE.MeshBasicMaterial>(null)
 
     useFrame((_, delta) => {
-        if (!mesh.current) return
-        mesh.current.position.y += speed * delta
-        if (mesh.current.position.y > 15) {
-            mesh.current.position.y = -15
+        if (!mesh.current || !mat.current) return
+
+        if (entered) {
+            // ЭТАП ПОГРУЖЕНИЯ: Плавно гасим прозрачность до нуля
+            mat.current.opacity = THREE.MathUtils.lerp(mat.current.opacity, 0, 4 * delta)
+        } else {
+            // ШТАТНЫЙ РЕЖИМ: Код падает вниз
+            mesh.current.position.y += speed * delta
+            if (mesh.current.position.y > 15) {
+                mesh.current.position.y = -15
+            }
         }
     })
 
@@ -102,6 +108,7 @@ function CodeColumn({ x, y, z, speed, opacity, texture }: { x: number, y: number
         <mesh ref={mesh} position={[x, y, z]}>
             <planeGeometry args={[5, 10]} />
             <meshBasicMaterial
+                ref={mat}
                 map={texture}
                 transparent
                 opacity={opacity}
@@ -115,9 +122,21 @@ function CodeColumn({ x, y, z, speed, opacity, texture }: { x: number, y: number
 
 export function CodeBackground() {
     const { mode } = useQuality()
+    const { entered } = useIntro()
+
+    // Состояние для полного удаления (unmount)
+    const [unmounted, setUnmounted] = useState(false)
 
     // ГЕНЕРИРУЕМ ТЕКСТУРУ 1 РАЗ ДЛЯ ВСЕХ! Это спасет FPS.
     const sharedTexture = useMemo(() => createCodeTexture(), [])
+
+    // Таймер: через 2 секунды после начала погружения удаляем фон из памяти
+    useEffect(() => {
+        if (entered) {
+            const timer = setTimeout(() => setUnmounted(true), 2000)
+            return () => clearTimeout(timer)
+        }
+    }, [entered])
 
     const columns = useMemo(() => [
         { x: -5, y: 0, z: -8, speed: 0.5, opacity: 0.15 },
@@ -129,12 +148,13 @@ export function CodeBackground() {
         { x: 4, y: -12, z: -14, speed: 0.5, opacity: 0.08 },
     ], [])
 
-    if (mode === 'low' || !sharedTexture) return null
+    // Если низкое качество, нет текстуры ИЛИ включился unmounted — выгружаем
+    if (mode === 'low' || !sharedTexture || unmounted) return null
 
     return (
         <>
             {columns.map((col, i) => (
-                <CodeColumn key={i} {...col} texture={sharedTexture} />
+                <CodeColumn key={i} {...col} texture={sharedTexture} entered={entered} />
             ))}
         </>
     )

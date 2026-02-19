@@ -6,7 +6,7 @@ import { GlobeGrid } from './GlobeGrid'
 import { HeroRig } from './HeroRig'
 import { useIntro } from '../context/IntroContext'
 import { useFrame } from '@react-three/fiber'
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
 
 export function HeroAsset() {
@@ -16,20 +16,17 @@ export function HeroAsset() {
     const logoRef = useRef<THREE.Group>(null)
     const solidGlobeRef = useRef<THREE.Group>(null)
 
-    // 1. Слушатель скролла/клика
+    const [logoUnmounted, setLogoUnmounted] = useState(false)
+    const [globeUnmounted, setGlobeUnmounted] = useState(false)
+
     useEffect(() => {
         if (!booted || entered) return
 
         const handleInteract = (e: any) => {
-            // Защита от случайных микро-скроллов на тачпаде
             if (e.type === 'wheel' && Math.abs(e.deltaY) < 20) return
-
-            if (setEntered) {
-                setEntered(true)
-            }
+            if (setEntered) setEntered(true)
         }
 
-        // Даем 1 секунду после Интро, чтобы пользователь увидел сцену
         const timer = setTimeout(() => {
             window.addEventListener('wheel', handleInteract, { passive: true })
             window.addEventListener('click', handleInteract)
@@ -44,27 +41,42 @@ export function HeroAsset() {
         }
     }, [booted, entered, setEntered])
 
-    // 2. Вся анимация
     useFrame((state, delta) => {
         if (!group.current) return
 
-        // ВАЖНО: Главная группа теперь растет ВСЕГДА, независимо от того, нырнули мы или нет!
         const targetScale = booted ? 1 : 0
         group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, targetScale, 4 * delta))
 
-        // Если сработал триггер погружения (entered === true)
         if (entered) {
-            // Камера летит в центр
+            // 1. Камера летит в центр
             state.camera.position.lerp(new THREE.Vector3(0, -1.2, 0.1), 3 * delta)
 
-            // Логотип улетает за камеру
-            if (logoRef.current) {
-                logoRef.current.position.z = THREE.MathUtils.lerp(logoRef.current.position.z, 25, 4 * delta)
+            // 2. Логотип летит медленно и плавно (+= вместо lerp дает стабильную скорость)
+            if (logoRef.current && !logoUnmounted) {
+                logoRef.current.position.z += 5 * delta
+                if (logoRef.current.position.z > 10) {
+                    setLogoUnmounted(true) // Удаляем при достижении 10
+                }
             }
 
-            // Земля сжимается в ноль
-            if (solidGlobeRef.current) {
-                solidGlobeRef.current.scale.setScalar(THREE.MathUtils.lerp(solidGlobeRef.current.scale.x, 0, 5 * delta))
+            // 3. Сплошная Земля: плавно растворяем все материалы внутри нее
+            if (solidGlobeRef.current && !globeUnmounted) {
+                let allFaded = true
+                solidGlobeRef.current.traverse((child: any) => {
+                    if (child.isMesh && child.material) {
+                        const materials = Array.isArray(child.material) ? child.material : [child.material]
+                        // ИСПРАВЛЕНО: добавлено (mat: any)
+                        materials.forEach((mat: any) => {
+                            mat.transparent = true
+                            if (mat.opacity === undefined) mat.opacity = 1
+                            // Гасим прозрачность
+                            mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, 4 * delta)
+                            if (mat.opacity > 0.05) allFaded = false
+                        })
+                    }
+                })
+                // Как только материалы стали полностью прозрачными — выгружаем объект
+                if (allFaded) setGlobeUnmounted(true)
             }
         }
     })
@@ -73,18 +85,22 @@ export function HeroAsset() {
         <group position={[0, -1.6, 0]}>
             <group ref={group} scale={[0, 0, 0]}>
 
-                {/* ЛОГОТИП (только он обернут в HeroRig) */}
-                <HeroRig>
-                    <group ref={logoRef} rotation={[0, -Math.PI / 2, 0]} position={[0.1, 0, 0.35]}>
-                        <LogoModel />
-                    </group>
-                </HeroRig>
+                {/* ЛОГОТИП */}
+                {!logoUnmounted && (
+                    <HeroRig>
+                        <group ref={logoRef} rotation={[0, -Math.PI / 2, 0]} position={[0.1, 0, 0.35]}>
+                            <LogoModel />
+                        </group>
+                    </HeroRig>
+                )}
 
                 <group position={[0, 0.4, 0]}>
-                    {/* СПЛОШНАЯ ЗЕМЛЯ */}
-                    <group ref={solidGlobeRef}>
-                        <GlobeModel />
-                    </group>
+                    {/* СПЛОШНАЯ ЗЕМЛЯ (растворяется и удаляется) */}
+                    {!globeUnmounted && (
+                        <group ref={solidGlobeRef}>
+                            <GlobeModel />
+                        </group>
+                    )}
 
                     {/* СЕТКА (Остается всегда) */}
                     <GlobeGrid />
