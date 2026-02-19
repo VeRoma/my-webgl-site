@@ -4,9 +4,11 @@ import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postpro
 import * as THREE from 'three'
 import { useMemo } from 'react'
 import { useQuality } from '../context/QualityContext'
+import { useIntro } from '../context/IntroContext'
 
 export function Effects() {
     const { postProcessing } = useQuality()
+    const { entered } = useIntro()
 
     // Создаем вектор один раз
     const aberrationOffset = useMemo(() => new THREE.Vector2(0.0005, 0.0005), [])
@@ -18,7 +20,7 @@ export function Effects() {
             <Bloom
                 luminanceThreshold={0.8}
                 mipmapBlur
-                intensity={1.0}
+                intensity={entered ? 0.1 : 1.0}
                 radius={0.6}
             />
             <ChromaticAberration

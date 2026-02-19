@@ -4,13 +4,20 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
+import { useIntro } from '../context/IntroContext'
 
 export function GlobeGrid() {
     const meshRef = useRef<THREE.Mesh>(null)
+    const { entered } = useIntro()
+    const speedRef = useRef(0.05)
 
     useFrame((state, delta) => {
         if (meshRef.current) {
-            meshRef.current.rotation.y += delta * 0.05
+            // Плавный переход к новой скорости
+            const targetSpeed = entered ? 0.01 : 0.05
+            speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
+            
+            meshRef.current.rotation.y += delta * speedRef.current
         }
     })
 
@@ -30,15 +37,9 @@ export function GlobeGrid() {
       */}
             <Edges
                 scale={0.4}     //
-                threshold={0.5}   //
-
-                // 1. Передаем цвет напрямую сюда
+                threshold={1}   //
                 color={neonColor}
-
-                // 2. ВАЖНО: Отключаем toneMapping для этого компонента, чтобы он светился
                 toneMapped={false}
-
-                // 3. Настраиваем прозрачность
                 transparent={true}
                 opacity={0.1} // Чуть приглушил сетку, чтобы континенты были ярче
 
