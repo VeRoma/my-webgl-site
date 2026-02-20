@@ -7,7 +7,7 @@ export function Platform() {
     const { reflections } = useQuality() // Проверяем, включены ли отражения
 
     return (
-        <group position={[0, -2, 0]}>
+        <group position={[0, -1.2, 0]}>
 
             {/* 1. Верхний диск */}
             <mesh receiveShadow>

@@ -10,7 +10,7 @@ import { useRef, useEffect, useState } from 'react'
 import * as THREE from 'three'
 
 export function HeroAsset() {
-    const { booted, entered, setEntered } = useIntro()
+    const { booted, entered, setEntered, flightFinished, setFlightFinished } = useIntro()
 
     const group = useRef<THREE.Group>(null)
     const logoRef = useRef<THREE.Group>(null)
@@ -18,6 +18,7 @@ export function HeroAsset() {
 
     const [logoUnmounted, setLogoUnmounted] = useState(false)
     const [globeUnmounted, setGlobeUnmounted] = useState(false)
+    const flightTime = useRef(0)
 
     useEffect(() => {
         if (!booted || entered) return
@@ -47,10 +48,32 @@ export function HeroAsset() {
         const targetScale = booted ? 1 : 0
         group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, targetScale, 4 * delta))
 
-        if (entered) {
-            // 1. Камера летит в центр
-            state.camera.position.lerp(new THREE.Vector3(0, -1.2, 0.1), 3 * delta)
+        // ЗАПУСКАЕМ АНИМАЦИЮ ПОСЛЕ "ВХОДА", НО ТОЛЬКО ЕСЛИ ПОЛЕТ НЕ ЗАВЕРШЕН
+        if (entered && !flightFinished) {
+            // Защита от больших скачков времени (delta)
+            const dt = Math.min(delta, 0.05)
+            const flightDuration = 1.5 // Секунды
+            flightTime.current = Math.min(flightTime.current + dt / flightDuration, 1)
 
+            // Элементарный Smoothstep (Ease-In-Out)
+            const t = flightTime.current * flightTime.current * (3 - 2 * flightTime.current)
+
+            const startPos = new THREE.Vector3(0, 0, 4)
+            const endPos = new THREE.Vector3(0, 0, 0)
+
+            // 1. Устанавливаем позицию камеры через интерполяцию
+            state.camera.position.lerpVectors(startPos, endPos, t)
+
+            // 2. Стабилизируем взгляд на фиксированную точку
+            state.camera.lookAt(0, 0, -1)
+
+            // ПРОВЕРЯЕМ ЗАВЕРШЕНИЕ
+            if (flightTime.current >= 1) {
+                setFlightFinished(true)
+            }
+        }
+
+        if (entered) {
             // 2. Логотип летит медленно и плавно (+= вместо lerp дает стабильную скорость)
             if (logoRef.current && !logoUnmounted) {
                 logoRef.current.position.z += 5 * delta
@@ -82,7 +105,7 @@ export function HeroAsset() {
     })
 
     return (
-        <group position={[0, -1.6, 0]}>
+        <group position={[0, 0, 0]}>
             <group ref={group} scale={[0, 0, 0]}>
 
                 {/* ЛОГОТИП */}
@@ -94,7 +117,7 @@ export function HeroAsset() {
                     </HeroRig>
                 )}
 
-                <group position={[0, 0.4, 0]}>
+                <group position={[0, 0, 0]}>
                     {/* СПЛОШНАЯ ЗЕМЛЯ (растворяется и удаляется) */}
                     {!globeUnmounted && (
                         <group ref={solidGlobeRef}>

@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, ContactShadows } from '@react-three/drei'
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 
 import { HeroAsset } from './HeroAsset'
@@ -16,22 +16,47 @@ import { useQuality } from '../context/QualityContext'
 import { useIntro } from '../context/IntroContext'
 
 function CameraController() {
-    const { entered } = useIntro()
+    const { flightFinished } = useIntro()
     const controlsRef = useRef<any>(null)
 
-    useFrame((state, delta) => {
-        if (entered && controlsRef.current) {
-            controlsRef.current.target.lerp(new THREE.Vector3(0, -1.2, -0.1), 3 * delta)
-            controlsRef.current.enableZoom = false
+    useFrame((state) => {
+        // 1. Обновляем демпфирование, если оно включено
+        if (controlsRef.current?.enableDamping) {
+            controlsRef.current.update()
+        }
+
+        // 2. СИНХРОНИЗАЦИЯ TARGET:
+        // Вычисляем прогресс на основе Z-позиции камеры (от 4 до 0.01)
+        const zStart = 4
+        const zEnd = 0.01
+        const currentZ = state.camera.position.z
+
+        // Линейный прогресс на основе позиции (0 -> 1)
+        const p = THREE.MathUtils.clamp((currentZ - zStart) / (zEnd - zStart), 0, 1)
+
+        // В новой версии всё центрировано по 0
+        const startTargetY = 0
+        const endTargetY = 0
+        const currentTargetY = startTargetY + (endTargetY - startTargetY) * p
+
+        // Прямое обновление target у контроллов без ререндера
+        if (controlsRef.current) {
+            // Во время полета смотрим в (0, 0, -1) для стабилизации вектора,
+            // но после завершения OrbitControls должен вращаться вокруг (0,0,0) или (0,0,-1)?
+            // Если мы внутри сферы и хотим вращаться на месте, цель должна быть (0,0,-1)
+            controlsRef.current.target.set(0, currentTargetY, flightFinished ? -1 : -1 * p)
         }
     })
 
     return (
         <OrbitControls
             ref={controlsRef}
-            enableZoom={true}
-            target={[0, -1.6, 0]}
-            maxPolarAngle={Math.PI / 2}
+            enabled={flightFinished}
+            enableDamping={flightFinished}
+            dampingFactor={0.05}
+            minPolarAngle={0}
+            maxPolarAngle={flightFinished ? Math.PI : Math.PI / 2}
+            enableZoom={false}
         />
     )
 }
@@ -60,7 +85,7 @@ function PlatformWrapper() {
         <group ref={platformRef}>
             <Platform />
             {shadows && (
-                <ContactShadows frames={1} position={[0, -1.9, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
+                <ContactShadows frames={1} position={[0, -1.1, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
             )}
         </group>
     )
@@ -73,7 +98,7 @@ function SceneContent() {
         <Canvas
             shadows={shadows}
             dpr={dpr}
-            camera={{ position: [0, -1, 4], fov: 50 }}
+            camera={{ position: [0, 0, 4], fov: 50, near: 0.1 }}
             gl={{
                 antialias: true,
                 toneMapping: THREE.ACESFilmicToneMapping,

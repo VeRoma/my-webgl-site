@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 
 import { IntroOverlay } from './components/IntroOverlay'
 // ИСПРАВЛЕННЫЙ ПУТЬ:
-import { IntroProvider } from './context/IntroContext'
+import { IntroProvider, useIntro } from './context/IntroContext'
 import { QualityProvider } from './context/QualityContext'
 
 const Scene = dynamic(() => import('./components/Scene'), {
@@ -23,10 +23,15 @@ export default function Home() {
           </div>
 
           {/* Интро (поверх сцены) */}
-          <IntroOverlay />
+          <IntroProviderConsumer />
 
         </IntroProvider>
       </QualityProvider>
     </main>
   )
+}
+
+function IntroProviderConsumer() {
+  const { booted } = useIntro()
+  return !booted ? <IntroOverlay /> : null
 }

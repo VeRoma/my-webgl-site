@@ -8,6 +8,8 @@ interface IntroContextType {
     setBooted: (v: boolean) => void
     entered: boolean                  // <--- Добавили это
     setEntered: (v: boolean) => void  // <--- Добавили это
+    flightFinished: boolean
+    setFlightFinished: (v: boolean) => void
 }
 
 // 2. Создаем контекст
@@ -17,9 +19,10 @@ const IntroContext = createContext<IntroContextType>({} as IntroContextType)
 export function IntroProvider({ children }: { children: ReactNode }) {
     const [booted, setBooted] = useState(false)
     const [entered, setEntered] = useState(false) // <--- И добавили стейт здесь
+    const [flightFinished, setFlightFinished] = useState(false)
 
     return (
-        <IntroContext.Provider value={{ booted, setBooted, entered, setEntered }}>
+        <IntroContext.Provider value={{ booted, setBooted, entered, setEntered, flightFinished, setFlightFinished }}>
             {children}
         </IntroContext.Provider>
     )
