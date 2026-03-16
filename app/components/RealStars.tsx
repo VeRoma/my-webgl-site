@@ -98,9 +98,11 @@ export function RealStars() {
 
     return (
         <group>
-            <instancedMesh ref={meshRef} args={[null as any, null as any, count]}>
+            {/* 1. Отключаем frustumCulled, чтобы Three.js не прятал разбросанные инстансы */}
+            <instancedMesh ref={meshRef} args={[null as any, null as any, count]} frustumCulled={false}>
                 <sphereGeometry args={[1, 8, 8]} />
-                <meshBasicMaterial toneMapped={false} />
+                {/* 2. Отключаем влияние черного тумана (fog={false}) */}
+                <meshBasicMaterial toneMapped={false} fog={false} />
             </instancedMesh>
         </group>
     )

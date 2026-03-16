@@ -31,14 +31,13 @@ export function HeroAsset() {
         const timer = setTimeout(() => {
             window.addEventListener('wheel', handleInteract, { passive: true })
             window.addEventListener('click', handleInteract)
-            window.addEventListener('touchstart', handleInteract)
+            // Убрали touchstart, чтобы свайп на телефоне вращал камеру, а не запускал полет
         }, 1000)
 
         return () => {
             clearTimeout(timer)
             window.removeEventListener('wheel', handleInteract)
             window.removeEventListener('click', handleInteract)
-            window.removeEventListener('touchstart', handleInteract)
         }
     }, [booted, entered, setEntered])
 

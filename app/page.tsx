@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 
 import { IntroOverlay } from './components/IntroOverlay'
-// ИСПРАВЛЕННЫЙ ПУТЬ:
+import { UIOverlay } from './components/UIOverlay' // <-- ДОБАВЛЕНО
 import { IntroProvider, useIntro } from './context/IntroContext'
 import { QualityProvider } from './context/QualityContext'
 
@@ -21,6 +21,9 @@ export default function Home() {
           <div className="absolute inset-0 z-0">
             <Scene />
           </div>
+
+          {/* Главный интерфейс (кнопки качества, меню) */}
+          <UIOverlay /> {/* <-- ДОБАВЛЕНО */}
 
           {/* Интро (поверх сцены) */}
           <IntroProviderConsumer />

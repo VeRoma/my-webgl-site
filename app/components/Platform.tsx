@@ -18,31 +18,7 @@ export function Platform() {
                 />
             </mesh>
 
-            {/* 1.1 Ground (Нижний блин) */}
-            <mesh receiveShadow position={[0, -0.2, 0]}>
-                <cylinderGeometry args={[3, 3.05, 0.1, 64]} />
-
-                {/* УСЛОВНЫЙ РЕНДЕР МАТЕРИАЛА */}
-                {reflections ? (
-                    // Тяжелый красивый материал (High/Med)
-                    <MeshReflectorMaterial
-                        blur={[50, 50]}
-                        resolution={1024} // Можно тоже менять динамически (512 для Med)
-                        mixBlur={0.5}
-                        mixStrength={30}
-                        roughness={1}
-                        depthScale={1.2}
-                        minDepthThreshold={0.4}
-                        maxDepthThreshold={1.4}
-                        color="#050505"
-                        metalness={0.5}
-                        mirror={0.7}
-                    />
-                ) : (
-                    // Легкий фоллбек (Low) — просто темный пол
-                    <meshStandardMaterial color="#050505" roughness={0.4} metalness={0.5} />
-                )}
-            </mesh>
+           
 
             {/* ... Кольца и свет оставляем без изменений ... */}
             <mesh position={[0, 0.16, 0]} rotation={[-Math.PI / 2, 0, 0]}>
