@@ -1,0 +1,30 @@
+{
+  "module": "HeroAsset",
+  "description": "A React Three Fiber component that orchestrates the primary 3D hero sequence, handling camera flight paths, interactive entrance triggers, and the lifecycle/fading of logo and globe models.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "animation",
+    "r3f",
+    "camera-interpolation",
+    "interaction-handling",
+    "3d-scene-management"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "HeroAsset"
+    ]
+  },
+  "dependencies": [
+    "./LogoModel",
+    "./GlobeModel",
+    "./GlobeGrid",
+    "./HeroRig",
+    "../context/IntroContext",
+    "@react-three/fiber",
+    "react",
+    "three"
+  ]
+}

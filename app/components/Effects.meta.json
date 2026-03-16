@@ -1,0 +1,28 @@
+{
+  "module": "Effects",
+  "description": "A React Three Fiber component that implements post-processing effects including Bloom and Chromatic Aberration. It features a dynamic intensity transition based on the intro state and conditionally renders based on quality settings.",
+  "keywords": [
+    "react-three-fiber",
+    "post-processing",
+    "bloom",
+    "chromatic-aberration",
+    "three.js",
+    "r3f",
+    "lerp",
+    "animation"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "Effects"
+    ]
+  },
+  "dependencies": [
+    "@react-three/postprocessing",
+    "three",
+    "react",
+    "../context/QualityContext",
+    "../context/IntroContext",
+    "@react-three/fiber"
+  ]
+}

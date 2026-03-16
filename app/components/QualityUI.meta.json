@@ -1,0 +1,23 @@
+{
+  "module": "QualityUI",
+  "description": "A React client component providing a toggle interface for switching between different performance quality modes (low, medium, high) via context state.",
+  "keywords": [
+    "QualityUI",
+    "performance-toggle",
+    "react-context",
+    "ui-component",
+    "client-component",
+    "nextjs",
+    "state-management"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "QualityUI"
+    ]
+  },
+  "dependencies": [
+    "../context/QualityContext",
+    "react"
+  ]
+}

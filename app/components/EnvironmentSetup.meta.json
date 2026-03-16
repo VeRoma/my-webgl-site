@@ -1,0 +1,24 @@
+{
+  "module": "EnvironmentSetup",
+  "description": "A React Three Fiber component that configures the 3D scene's lighting environment and background properties using a High Dynamic Range (HDR) image.",
+  "keywords": [
+    "react-three-fiber",
+    "three.js",
+    "environment",
+    "hdr",
+    "lighting",
+    "scene-properties",
+    "background-blur"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "EnvironmentSetup"
+    ]
+  },
+  "dependencies": [
+    "@react-three/drei",
+    "@react-three/fiber",
+    "react"
+  ]
+}

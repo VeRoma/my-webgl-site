@@ -1,0 +1,27 @@
+{
+  "module": "page",
+  "description": "The main entry point component for the application's home page, orchestrating the 3D scene rendering, quality management, and the initial introduction overlay using React Context and dynamic imports.",
+  "keywords": [
+    "Next.js",
+    "React",
+    "Client Component",
+    "Context API",
+    "Dynamic Import",
+    "3D Scene",
+    "Intro Overlay",
+    "State Management"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "Home"
+    ]
+  },
+  "dependencies": [
+    "next/dynamic",
+    "./components/IntroOverlay",
+    "./context/IntroContext",
+    "./context/QualityContext",
+    "./components/Scene"
+  ]
+}

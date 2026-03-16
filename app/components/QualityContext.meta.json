@@ -1,0 +1,22 @@
+{
+    "module": "QualityContext",
+    "description": "React Context provider for managing graphics quality settings. Controls DPR (Device Pixel Ratio) and toggles heavy effects.",
+    "keywords": [
+        "state",
+        "context",
+        "performance",
+        "dpr",
+        "quality",
+        "settings"
+    ],
+    "interfaces": {
+        "inputs": [
+            "children"
+        ],
+        "exports": [
+            "QualityProvider",
+            "useQuality"
+        ]
+    },
+    "dependencies": []
+}

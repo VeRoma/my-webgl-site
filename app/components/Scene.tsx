@@ -12,8 +12,10 @@ import { Lights } from './Lights'
 import { Platform } from './Platform'
 import { CodeBackground } from './CodeBackground'
 import { StarsBackground } from './StarsBackground'
+import { RealStarsBackground } from './RealStarsBackground'
 import { useQuality } from '../context/QualityContext'
 import { useIntro } from '../context/IntroContext'
+import { RealStars } from './RealStars'
 
 function CameraController() {
     const { flightFinished } = useIntro()
@@ -108,12 +110,24 @@ function SceneContent() {
                 state.gl.setClearColor('#000000')
             }}
         >
+            {/* Базовый цвет канваса остается, он будет позади нашей сферы HDR */}
             <color attach="background" args={['#000000']} />
             <fog attach="fog" args={['#000000', 5, 20]} />
             <Lights />
             <Suspense fallback={null}><EnvironmentSetup /></Suspense>
 
-            <StarsBackground />
+            {/* СЛОЙ 1: HDR-Фон (Скайбокс) */}
+            <Suspense fallback={null}>
+                <RealStarsBackground />
+            </Suspense>
+
+            {/* СЛОЙ 2: Звезды-пылинки переднего плана */}
+            {/* <StarsBackground /> */}
+
+            <RealStars />
+
+
+            {/* СЛОЙ 3: Матричный код */}
             <CodeBackground />
 
             {/* ИСПОЛЬЗУЕМ НАШУ УМНУЮ ОБЕРТКУ */}

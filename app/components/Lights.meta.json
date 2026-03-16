@@ -1,0 +1,24 @@
+{
+  "module": "Lights",
+  "description": "A React component that configures a multi-source 3D lighting setup including ambient, spot, and point lights with a neon-inspired color palette for 3D scenes.",
+  "keywords": [
+    "three.js",
+    "react-three-fiber",
+    "lighting",
+    "ambientLight",
+    "spotLight",
+    "pointLight",
+    "shadows",
+    "neon-lighting"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "Lights"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "three"
+  ]
+}

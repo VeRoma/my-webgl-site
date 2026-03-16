@@ -1,0 +1,27 @@
+{
+    "module": "Scene",
+    "description": "Main WebGL Canvas wrapper. Composes lighting, environment, 3D models, and post-processing effects.",
+    "keywords": [
+        "webgl",
+        "canvas",
+        "root",
+        "render",
+        "scene",
+        "r3f"
+    ],
+    "interfaces": {
+        "inputs": [],
+        "exports": [
+            "Scene"
+        ]
+    },
+    "dependencies": [
+        "./Lights",
+        "./EnvironmentSetup",
+        "./GlobeModel",
+        "./LogoModel",
+        "./HeroRig",
+        "./StarsBackground",
+        "./Effects"
+    ]
+}

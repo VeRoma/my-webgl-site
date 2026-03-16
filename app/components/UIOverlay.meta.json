@@ -1,0 +1,24 @@
+{
+  "module": "UIOverlay",
+  "description": "A Next.js client component that renders a stylized HUD-like user interface overlay, featuring site navigation, system status indicators, and rendering quality controls.",
+  "keywords": [
+    "react",
+    "hud",
+    "overlay",
+    "navigation",
+    "quality-settings",
+    "ui",
+    "tailwind"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "UIOverlay"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "../context/IntroContext",
+    "../context/QualityContext"
+  ]
+}

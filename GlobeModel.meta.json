@@ -1,0 +1,28 @@
+{
+  "module": "GlobeModel",
+  "description": "A React Three Fiber component that loads a 3D GLB globe model, applies a custom neon-glow material to line segments by disabling tone mapping, and implements a slow rotational animation.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "drei",
+    "webgl",
+    "3d",
+    "globe",
+    "neon",
+    "bloom",
+    "animation"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "GlobeModel"
+    ]
+  },
+  "dependencies": [
+    "@react-three/drei",
+    "react",
+    "@react-three/fiber",
+    "three"
+  ]
+}

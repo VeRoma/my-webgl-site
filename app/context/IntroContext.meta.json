@@ -1,0 +1,25 @@
+{
+  "module": "IntroContext",
+  "description": "A React context provider and custom hook used to manage the state of the application's introduction and onboarding sequence, including boot status, user entry, and flight animation completion.",
+  "keywords": [
+    "react",
+    "context-api",
+    "state-management",
+    "intro",
+    "onboarding",
+    "hooks",
+    "client-side"
+  ],
+  "interfaces": {
+    "inputs": [
+      "children"
+    ],
+    "exports": [
+      "IntroProvider",
+      "useIntro"
+    ]
+  },
+  "dependencies": [
+    "react"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "module": "GlobeGrid",
+  "description": "A React Three Fiber component that renders an animated neon wireframe sphere. It utilizes smooth rotation speed transitions via linear interpolation based on the application's intro state.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "drei",
+    "animation",
+    "wireframe",
+    "globe",
+    "lerp",
+    "3d"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "GlobeGrid"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "@react-three/fiber",
+    "@react-three/drei",
+    "three",
+    "../context/IntroContext"
+  ]
+}

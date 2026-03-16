@@ -1,0 +1,28 @@
+{
+  "module": "GlobeGrid",
+  "description": "A React Three Fiber component that renders an animated, rotating wireframe sphere with a neon blue grid effect. It dynamically adjusts its rotation speed using linear interpolation based on the global entry state.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "drei",
+    "webgl",
+    "3d-animation",
+    "wireframe",
+    "globe",
+    "lerp"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "GlobeGrid"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "@react-three/fiber",
+    "@react-three/drei",
+    "three",
+    "../context/IntroContext"
+  ]
+}

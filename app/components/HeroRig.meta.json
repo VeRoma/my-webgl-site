@@ -1,0 +1,26 @@
+{
+  "module": "HeroRig",
+  "description": "A React Three Fiber component that implements a smooth parallax rotation effect on its children based on the user's mouse pointer position.",
+  "keywords": [
+    "react-three-fiber",
+    "three.js",
+    "parallax",
+    "mouse-interaction",
+    "animation",
+    "lerp",
+    "rigging"
+  ],
+  "interfaces": {
+    "inputs": [
+      "children"
+    ],
+    "exports": [
+      "HeroRig"
+    ]
+  },
+  "dependencies": [
+    "@react-three/fiber",
+    "react",
+    "three"
+  ]
+}

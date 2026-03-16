@@ -1,0 +1,24 @@
+{
+  "module": "SceneDebugger",
+  "description": "A diagnostic utility component for React Three Fiber that logs scene properties such as background state, tone mapping configurations, and light intensities to the console for troubleshooting rendering issues like overexposure.",
+  "keywords": [
+    "three.js",
+    "react-three-fiber",
+    "debugger",
+    "tone-mapping",
+    "lighting",
+    "webgl",
+    "scene-analysis"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "SceneDebugger"
+    ]
+  },
+  "dependencies": [
+    "@react-three/fiber",
+    "react",
+    "three"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+    "module": "GlobeModel",
+    "description": "Loads and renders the 3D globe GLTF model. Handles materials, wireframes, and continuous rotation logic.",
+    "keywords": [
+        "model",
+        "gltf",
+        "mesh",
+        "globe",
+        "earth",
+        "rotation",
+        "useGLTF"
+    ],
+    "interfaces": {
+        "inputs": [
+            "position",
+            "scale",
+            "rotation"
+        ],
+        "exports": [
+            "GlobeModel"
+        ]
+    },
+    "dependencies": [
+        "../../public/globe.glb"
+    ]
+}

@@ -1,0 +1,26 @@
+{
+  "module": "QualityContext",
+  "description": "A React context provider that manages global graphics quality presets, controlling performance-critical settings such as Device Pixel Ratio (DPR), antialiasing, shadows, reflections, and post-processing for rendering-intensive applications.",
+  "keywords": [
+    "react",
+    "context-api",
+    "performance-optimization",
+    "graphics-quality",
+    "rendering-presets",
+    "webgl",
+    "viewport-optimization"
+  ],
+  "interfaces": {
+    "inputs": [
+      "children"
+    ],
+    "exports": [
+      "QualityProvider",
+      "useQuality",
+      "QualityContext"
+    ]
+  },
+  "dependencies": [
+    "react"
+  ]
+}

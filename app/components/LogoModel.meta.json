@@ -1,0 +1,26 @@
+{
+  "module": "LogoModel",
+  "description": "A React Three Fiber component that loads and configures a 3D GLTF model with custom MeshPhysicalMaterial properties, including metalness, clearcoat, and emissive effects.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "drei",
+    "gltf",
+    "3d",
+    "webgl",
+    "meshphysicalmaterial"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "LogoModel"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "@react-three/drei",
+    "@react-three/fiber",
+    "three"
+  ]
+}

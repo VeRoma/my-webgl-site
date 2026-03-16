@@ -2,16 +2,13 @@
 
 import { useGLTF } from '@react-three/drei'
 import { useLayoutEffect, useRef } from 'react'
-// import { useFrame } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useIntro } from '../context/IntroContext'
 
 export function GlobeModel() {
     // Загружаем твой файл
     const { scene } = useGLTF('/globe.glb')
     const meshRef = useRef<THREE.Group>(null)
-    const { entered } = useIntro()
-    const speedRef = useRef(0.05)
 
     useLayoutEffect(() => {
         // Проходимся по всем объектам внутри файла
@@ -39,16 +36,12 @@ export function GlobeModel() {
         })
     }, [scene])
 
-    // Анимация: Медленное вращение Земли, синхронизированное с сеткой
-    /*
+    // Анимация: Медленное вращение Земли
     useFrame((state, delta) => {
         if (meshRef.current) {
-            const targetSpeed = entered ? 0.033 : 0.05
-            speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
-            meshRef.current.rotation.y += delta * speedRef.current
+            meshRef.current.rotation.y += delta * 0.05 // Очень медленно и величественно
         }
     })
-    */
 
     return (
         <group ref={meshRef}>

@@ -1,0 +1,25 @@
+{
+  "module": "Platform",
+  "description": "A 3D scene component built with React Three Fiber representing a pedestal or platform. It features dynamic performance scaling by conditionally rendering a MeshReflectorMaterial or a basic fallback material based on the current quality settings.",
+  "keywords": [
+    "react-three-fiber",
+    "three.js",
+    "webgl",
+    "3d-graphics",
+    "performance-optimization",
+    "conditional-rendering",
+    "reflections",
+    "mesh-reflector-material"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "Platform"
+    ]
+  },
+  "dependencies": [
+    "@react-three/drei",
+    "../context/QualityContext",
+    "react"
+  ]
+}

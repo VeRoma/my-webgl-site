@@ -14,7 +14,7 @@ export function GlobeGrid() {
     useFrame((state, delta) => {
         if (meshRef.current) {
             // Плавный переход к новой скорости
-            const targetSpeed = entered ? 0.033 : 0.05
+            const targetSpeed = entered ? 0.01 : 0.05
             speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
             
             meshRef.current.rotation.y += delta * speedRef.current

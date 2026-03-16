@@ -1,0 +1,23 @@
+{
+  "module": "StarsBackground",
+  "description": "A React Three Fiber component that renders an animated starry background using the Sparkles primitive, conditionally displayed based on the application's boot status.",
+  "keywords": [
+    "react",
+    "three.js",
+    "react-three-fiber",
+    "sparkles",
+    "background",
+    "animation",
+    "r3f"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "StarsBackground"
+    ]
+  },
+  "dependencies": [
+    "@react-three/drei",
+    "../context/IntroContext"
+  ]
+}

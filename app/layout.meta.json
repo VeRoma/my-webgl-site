@@ -1,0 +1,26 @@
+{
+  "module": "RootLayout",
+  "description": "The primary root layout component for a Next.js application, responsible for defining the top-level HTML structure, configuring global fonts (Geist Sans and Mono), and managing application metadata.",
+  "keywords": [
+    "next.js",
+    "root-layout",
+    "react",
+    "fonts",
+    "metadata",
+    "typescript"
+  ],
+  "interfaces": {
+    "inputs": [
+      "children"
+    ],
+    "exports": [
+      "metadata",
+      "RootLayout"
+    ]
+  },
+  "dependencies": [
+    "next",
+    "next/font/google",
+    "./globals.css"
+  ]
+}

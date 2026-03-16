@@ -1,0 +1,27 @@
+{
+  "module": "CodeBackground",
+  "description": "A high-performance 3D background component that renders scrolling code snippets using React Three Fiber. It features canvas-generated textures, additive blending for a glow effect, and sophisticated unmounting logic tied to quality settings and application state transitions.",
+  "keywords": [
+    "react-three-fiber",
+    "three.js",
+    "webgl",
+    "background",
+    "canvas-texture",
+    "animation",
+    "optimization",
+    "code-snippet"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "CodeBackground"
+    ]
+  },
+  "dependencies": [
+    "@react-three/fiber",
+    "three",
+    "react",
+    "../context/QualityContext",
+    "../context/IntroContext"
+  ]
+}

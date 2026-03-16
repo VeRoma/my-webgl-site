@@ -1,0 +1,18 @@
+{
+  "module": "css-declarations.d.ts",
+  "description": "Wildcard module declaration for CSS files, allowing TypeScript to recognize and import stylesheet files without compilation errors.",
+  "keywords": [
+    "typescript",
+    "css",
+    "declaration",
+    "module",
+    "typings"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "*.css"
+    ]
+  },
+  "dependencies": []
+}

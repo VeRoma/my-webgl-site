@@ -1,0 +1,20 @@
+{
+  "module": "next.config",
+  "description": "Core configuration file for the Next.js framework, used to define custom build settings, environment variables, and runtime behavior.",
+  "keywords": [
+    "next.js",
+    "configuration",
+    "typescript",
+    "build-settings",
+    "web-development"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "nextConfig"
+    ]
+  },
+  "dependencies": [
+    "next"
+  ]
+}

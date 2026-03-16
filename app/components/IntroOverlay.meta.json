@@ -1,0 +1,27 @@
+{
+  "module": "IntroOverlay",
+  "description": "A startup loading screen component that performs hardware GPU benchmarking, monitors 3D asset loading progress, and dynamically adjusts application graphics quality based on device performance and network speed.",
+  "keywords": [
+    "react",
+    "gpu-benchmarking",
+    "loading-screen",
+    "performance-optimization",
+    "webgl",
+    "quality-settings",
+    "ux",
+    "asset-loading"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "IntroOverlay"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "../context/IntroContext",
+    "../context/QualityContext",
+    "@react-three/drei",
+    "detect-gpu"
+  ]
+}
