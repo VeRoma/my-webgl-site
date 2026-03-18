@@ -130,6 +130,13 @@ export function CodeBackground() {
     // ГЕНЕРИРУЕМ ТЕКСТУРУ 1 РАЗ ДЛЯ ВСЕХ! Это спасет FPS.
     const sharedTexture = useMemo(() => createCodeTexture(), [])
 
+    // Очистка текстуры из памяти GPU при размонтировании
+    useEffect(() => {
+        return () => {
+            if (sharedTexture) sharedTexture.dispose()
+        }
+    }, [sharedTexture])
+
     // Таймер: через 2 секунды после начала погружения удаляем фон из памяти
     useEffect(() => {
         if (entered) {

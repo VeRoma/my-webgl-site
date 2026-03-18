@@ -1,12 +1,12 @@
 'use client'
 
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, ChromaticAberration, SMAA } from '@react-three/postprocessing'
 import * as THREE from 'three'
 import { useMemo } from 'react'
 import { useQuality } from '../context/QualityContext'
 
 export function Effects() {
-    const { postProcessing } = useQuality()
+    const { postProcessing, mode } = useQuality()
 
     // Вектор хроматической аберрации
     const aberrationOffset = useMemo(() => new THREE.Vector2(0.0005, 0.0005), [])
@@ -16,6 +16,10 @@ export function Effects() {
     return (
         // multisampling={0} спасает от краша WebGL
         <EffectComposer multisampling={0}>
+
+            {/* Программное сглаживание SMAA для режимов medium и high */}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {mode !== 'low' ? (<SMAA /> as any) : (null as any)}
 
             {/* Настраиваем свечение (Bloom) так, чтобы оно цепляло яркие звезды */}
             <Bloom

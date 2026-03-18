@@ -1,21 +1,23 @@
 'use client'
 
 import { useGLTF } from '@react-three/drei'
-import { useLayoutEffect, useRef } from 'react'
-// import { useFrame } from '@react-three/fiber'
+import { useLayoutEffect, useRef, useMemo } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useIntro } from '../context/IntroContext'
 
 export function GlobeModel() {
     // Загружаем твой файл
     const { scene } = useGLTF('/globe.glb')
+    const clonedScene = useMemo(() => scene.clone(), [scene])
     const meshRef = useRef<THREE.Group>(null)
     const { entered } = useIntro()
     const speedRef = useRef(0.05)
+    const { viewport } = useThree()
 
     useLayoutEffect(() => {
         // Проходимся по всем объектам внутри файла
-        scene.traverse((obj) => {
+        clonedScene.traverse((obj) => {
             // Ищем именно линии (Line или LineSegments)
             if ((obj as THREE.Line).isLine || (obj as THREE.LineSegments).isLineSegments) {
                 const line = obj as THREE.Line
@@ -37,10 +39,9 @@ export function GlobeModel() {
                 })
             }
         })
-    }, [scene])
+    }, [clonedScene])
 
     // Анимация: Медленное вращение Земли, синхронизированное с сеткой
-    /*
     useFrame((state, delta) => {
         if (meshRef.current) {
             const targetSpeed = entered ? 0.033 : 0.05
@@ -48,12 +49,13 @@ export function GlobeModel() {
             meshRef.current.rotation.y += delta * speedRef.current
         }
     })
-    */
+
+    const scale = viewport.aspect < 1 ? 0.03 : 0.045
 
     return (
         <group ref={meshRef}>
-            {/* scale={1.5} — Подбери размер, чтобы он был больше логотипа, но влезал в экран */}
-            <primitive object={scene} scale={0.045} />
+            {/* Масштаб адаптивен в зависимости от ширины экрана */}
+            <primitive object={clonedScene} scale={scale} />
         </group>
     )
 }

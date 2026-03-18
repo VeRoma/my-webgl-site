@@ -1,0 +1,23 @@
+{
+  "module": "RealStarsBackground",
+  "description": "A React Three Fiber component that renders an immersive space background using a large inverted sphere mapped with a starfield texture.",
+  "keywords": [
+    "react-three-fiber",
+    "three.js",
+    "skybox",
+    "stars",
+    "background",
+    "texture",
+    "r3f"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "RealStarsBackground"
+    ]
+  },
+  "dependencies": [
+    "@react-three/drei",
+    "three"
+  ]
+}

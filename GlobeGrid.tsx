@@ -4,7 +4,7 @@ import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
-import { useIntro } from '../context/IntroContext'
+import { useIntro } from './app/context/IntroContext'
 
 export function GlobeGrid() {
     const meshRef = useRef<THREE.Mesh>(null)

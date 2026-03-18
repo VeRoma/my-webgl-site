@@ -10,7 +10,7 @@ import { Effects } from './Effects'
 import { EnvironmentSetup } from './EnvironmentSetup'
 import { Lights } from './Lights'
 import { Platform } from './Platform'
-import { CodeBackground } from './CodeBackground'
+// import { CodeBackground } from './CodeBackground'
 import { RealStarsBackground } from './RealStarsBackground'
 import { RealStars } from './RealStars'
 import { useQuality } from '../context/QualityContext'
@@ -18,6 +18,7 @@ import { useIntro } from '../context/IntroContext'
 
 function CameraController() {
     const { entered, flightFinished } = useIntro()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const controlsRef = useRef<any>(null)
 
     useFrame((state) => {
@@ -26,28 +27,25 @@ function CameraController() {
             controlsRef.current.update()
         }
 
-        // 2. === БЫСТРОЕ ОБНОВЛЕНИЕ КООРДИНАТ В ИНТЕРФЕЙСЕ ===
-        const coordsElement = document.getElementById('camera-coords')
-        if (coordsElement) {
-            // Получаем 3D координаты камеры
-            const pos = state.camera.position
-            const radius = pos.length()
+        // 2. === БЫСТРОЕ ОБНОВЛЕНИЕ КООРДИНАТ ===
+        const pos = state.camera.position
+        const radius = pos.length()
 
-            if (radius > 0) {
-                // Переводим декартовы координаты (x,y,z) в сферические
-                const phi = Math.acos(pos.y / radius) // угол от "Северного полюса" (от 0 до Пи)
-                const theta = Math.atan2(pos.x, pos.z) // угол вокруг экватора
+        if (radius > 0) {
+            // Переводим декартовы координаты (x,y,z) в сферические
+            const phi = Math.acos(pos.y / radius) // угол от "Северного полюса" (от 0 до Пи)
+            const theta = Math.atan2(pos.x, pos.z) // угол вокруг экватора
 
-                // Пересчитываем в понятные человеку Широту и Долготу
-                const latDeg = 90 - (phi * 180 / Math.PI)
-                const latDir = latDeg >= 0 ? 'N' : 'S'
+            // Пересчитываем в понятные человеку Широту и Долготу
+            const latDeg = 90 - (phi * 180 / Math.PI)
+            const latDir = latDeg >= 0 ? 'N' : 'S'
 
-                const lonDeg = theta * 180 / Math.PI
-                const lonDir = lonDeg >= 0 ? 'E' : 'W'
+            const lonDeg = theta * 180 / Math.PI
+            const lonDir = lonDeg >= 0 ? 'E' : 'W'
 
-                // Напрямую обновляем текст в DOM, минуя React-состояния!
-                coordsElement.innerText = `COORDS: ${Math.abs(latDeg).toFixed(2)}° ${latDir}, ${Math.abs(lonDeg).toFixed(2)}° ${lonDir}`
-            }
+            // Отправляем кастомное событие вместо прямой мутации DOM
+            const coordsText = `COORDS: ${Math.abs(latDeg).toFixed(2)}° ${latDir}, ${Math.abs(lonDeg).toFixed(2)}° ${lonDir}`
+            window.dispatchEvent(new CustomEvent('update-coords', { detail: coordsText }))
         }
     })
 

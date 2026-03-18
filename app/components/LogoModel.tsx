@@ -1,15 +1,17 @@
-import React, { useRef, useLayoutEffect } from 'react'
+import React, { useRef, useLayoutEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 
 export function LogoModel() {
     const { scene } = useGLTF('/logo.glb')
+    const clonedScene = useMemo(() => scene.clone(), [scene])
     const meshRef = useRef<THREE.Group>(null)
+    const { viewport } = useThree()
 
     // Настройка материалов ПЕРЕД отрисовкой
     useLayoutEffect(() => {
-        scene.traverse((child) => {
+        clonedScene.traverse((child) => {
             // Проверяем, является ли объект частью сетки (Mesh)
             if ((child as THREE.Mesh).isMesh) {
                 const mesh = child as THREE.Mesh
@@ -35,10 +37,10 @@ export function LogoModel() {
                 mesh.receiveShadow = true
             }
         })
-    }, [scene])
+    }, [clonedScene])
 
     // Анимация: Вращение каждый кадр
-    useFrame((state, delta) => {
+    useFrame(() => {
         if (meshRef.current) {
             // meshRef.current.rotation.y += delta * 0.2 // Медленное вращение вокруг оси Y
             // Добавим легкое покачивание, как будто он левитирует
@@ -46,7 +48,9 @@ export function LogoModel() {
         }
     })
 
-    return <primitive ref={meshRef} object={scene} scale={1} />
+    const scale = viewport.aspect < 1 ? 0.7 : 1.0
+
+    return <primitive ref={meshRef} object={clonedScene} scale={scale} />
 }
 
 useGLTF.preload('/logo.glb')

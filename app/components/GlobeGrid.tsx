@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
 import { useIntro } from '../context/IntroContext'
@@ -10,11 +10,12 @@ export function GlobeGrid() {
     const meshRef = useRef<THREE.Mesh>(null)
     const { entered } = useIntro()
     const speedRef = useRef(0.05)
+    const { viewport } = useThree()
 
     useFrame((state, delta) => {
         if (meshRef.current) {
             // Плавный переход к новой скорости
-            const targetSpeed = entered ? 0.033 : 0.05
+            const targetSpeed = entered ? 0.01 : 0.05
             speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
             
             meshRef.current.rotation.y += delta * speedRef.current
@@ -24,9 +25,10 @@ export function GlobeGrid() {
     // Наш ядерный синий цвет
     // Используем те же значения, что и для континентов: [R=0, G=10, B=40]
     const neonColor = new THREE.Color(0, 10, 40)
+    const scale = viewport.aspect < 1 ? 0.66 : 1
 
     return (
-        <mesh ref={meshRef} scale={1}>
+        <mesh ref={meshRef} scale={scale}>
             {/* Геометрия-болванка */}
             <sphereGeometry args={[1, 36, 18]} />
             <meshBasicMaterial visible={false} />

@@ -1,0 +1,25 @@
+{
+  "module": "RealStars",
+  "description": "A high-performance React component for rendering celestial star fields using Three.js InstancedMesh. It transforms astronomical catalog data (Right Ascension, Declination, Magnitude, and B-V index) into a 3D coordinate system with accurate color temperature mapping and optimized WebGL rendering.",
+  "keywords": [
+    "react",
+    "three.js",
+    "instanced-mesh",
+    "astronomy",
+    "data-visualization",
+    "webgl",
+    "stellar-mapping",
+    "performance"
+  ],
+  "interfaces": {
+    "inputs": [],
+    "exports": [
+      "RealStars"
+    ]
+  },
+  "dependencies": [
+    "react",
+    "three",
+    "../data/bsc_2.json"
+  ]
+}

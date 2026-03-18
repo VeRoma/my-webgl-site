@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { useIntro } from '../context/IntroContext'
 import { useQuality } from '../context/QualityContext'
 
@@ -8,6 +9,18 @@ type QualityMode = "low" | "medium" | "high";
 export function UIOverlay() {
     const { booted } = useIntro()
     const { mode, setMode } = useQuality()
+    const coordsRef = useRef<HTMLParagraphElement>(null)
+
+    useEffect(() => {
+        const handleUpdate = (e: Event) => {
+            const customEvent = e as CustomEvent<string>;
+            if (coordsRef.current) {
+                coordsRef.current.innerText = customEvent.detail;
+            }
+        };
+        window.addEventListener('update-coords', handleUpdate);
+        return () => window.removeEventListener('update-coords', handleUpdate);
+    }, []);
 
     if (!booted) return null
 
@@ -37,7 +50,7 @@ export function UIOverlay() {
                             className="group relative px-6 py-2 border border-white/20 rounded-lg bg-black/40 backdrop-blur-md overflow-hidden transition-all hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(0,255,255,0.2)] text-right"
                         >
                             <span className="relative z-10 transition-colors group-hover:text-cyan-400">
-                                // {item}
+                                {"//"} {item}
                             </span>
                             <div className="absolute inset-0 bg-cyan-500/10 translate-x-full group-hover:translate-x-0 transition-transform duration-300" />
                         </button>
@@ -47,10 +60,10 @@ export function UIOverlay() {
 
             <footer className="flex justify-between items-end">
                 <div className="font-mono text-[10px] text-white/40 tracking-widest hidden md:block select-none">
-                    {/* ДОБАВЛЕН id="camera-coords" и tabular-nums */}
-                    <p id="camera-coords" className="tabular-nums">COORDS: 42.87° N, 74.59° E</p>
+                    {/* Использование ref для безопасного обновления вне жизненного цикла React */}
+                    <p ref={coordsRef} id="camera-coords" className="tabular-nums">COORDS: 42.87° N, 74.59° E</p>
                     <div className="h-px w-24 bg-white/20 my-1" />
-                    <p>GRID: ACTIVE // TRACE: ON</p>
+                    <p>GRID: ACTIVE {"//"} TRACE: ON</p>
                 </div>
 
                 <div className="pointer-events-auto">
