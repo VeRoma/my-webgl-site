@@ -4,6 +4,7 @@ import { LogoModel } from './LogoModel'
 import { GlobeModel } from './GlobeModel'
 import { GlobeGrid } from './GlobeGrid'
 import { HeroRig } from './HeroRig'
+import { MagicParticles } from './MagicParticles'
 import { useIntro } from '../context/IntroContext'
 import { useFrame } from '@react-three/fiber'
 import { useRef, useEffect, useState } from 'react'
@@ -23,9 +24,10 @@ export function HeroAsset() {
     useEffect(() => {
         if (!booted || entered) return
 
-        const handleInteract = (e: any) => {
-            if (e.type === 'wheel' && Math.abs(e.deltaY) < 20) return
-            if (setEntered) setEntered(true)
+        const handleInteract = (e: Event) => {
+            if (e.type === 'wheel' && Math.abs((e as WheelEvent).deltaY) < 20) return
+            // ВРЕМЕННО ОТКЛЮЧАЕМ ПЕРЕХОД ПО КЛИКУ/СКРОЛЛУ ДЛЯ ОТЛАДКИ ГЛАВНОЙ СЦЕНЫ
+            // if (setEntered) setEntered(true)
         }
 
         const timer = setTimeout(() => {
@@ -84,11 +86,12 @@ export function HeroAsset() {
             // 3. Сплошная Земля: плавно растворяем все материалы внутри нее
             if (solidGlobeRef.current && !globeUnmounted) {
                 let allFaded = true
-                solidGlobeRef.current.traverse((child: any) => {
-                    if (child.isMesh && child.material) {
-                        const materials = Array.isArray(child.material) ? child.material : [child.material]
-                        // ИСПРАВЛЕНО: добавлено (mat: any)
-                        materials.forEach((mat: any) => {
+                solidGlobeRef.current.traverse((child: THREE.Object3D) => {
+                    const mesh = child as THREE.Mesh
+                    if (mesh.isMesh && mesh.material) {
+                        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+                        materials.forEach((m: THREE.Material) => {
+                            const mat = m as THREE.Material & { opacity: number }
                             mat.transparent = true
                             if (mat.opacity === undefined) mat.opacity = 1
                             // Гасим прозрачность
@@ -106,6 +109,9 @@ export function HeroAsset() {
     return (
         <group position={[0, 0, 0]}>
             <group ref={group} scale={[0, 0, 0]}>
+
+                {/* МАГИЧЕСКИЕ ЧАСТИЦЫ (Дзен-вихрь) */}
+                <MagicParticles />
 
                 {/* ЛОГОТИП */}
                 {!logoUnmounted && (

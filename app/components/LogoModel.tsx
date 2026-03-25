@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react'
+import React, { useRef, useLayoutEffect, useMemo } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
@@ -7,9 +7,12 @@ export function LogoModel() {
     const { scene } = useGLTF('/logo.glb')
     const meshRef = useRef<THREE.Group>(null)
 
+    // Клонируем сцену для избежания мутаций кэша и HMR багов
+    const clonedScene = useMemo(() => scene.clone(), [scene])
+
     // Настройка материалов ПЕРЕД отрисовкой
     useLayoutEffect(() => {
-        scene.traverse((child) => {
+        clonedScene.traverse((child) => {
             // Проверяем, является ли объект частью сетки (Mesh)
             if ((child as THREE.Mesh).isMesh) {
                 const mesh = child as THREE.Mesh
@@ -29,16 +32,20 @@ export function LogoModel() {
 
                     // Добавляем слой "лака" для двойных бликов
                     clearcoat: 1.0,
-                    clearcoatRoughness: 0.1
+                    clearcoatRoughness: 0.1,
+
+                    // ДЗЕН-МАТЕРИАЛИЗАЦИЯ: Делаем изначально полностью прозрачным
+                    transparent: true,
+                    opacity: 0
                 })
                 mesh.castShadow = true
                 mesh.receiveShadow = true
             }
         })
-    }, [scene])
+    }, [clonedScene])
 
     // Анимация: Вращение каждый кадр
-    useFrame((state, delta) => {
+    useFrame(() => {
         if (meshRef.current) {
             // meshRef.current.rotation.y += delta * 0.2 // Медленное вращение вокруг оси Y
             // Добавим легкое покачивание, как будто он левитирует
@@ -46,7 +53,7 @@ export function LogoModel() {
         }
     })
 
-    return <primitive ref={meshRef} object={scene} scale={1} />
+    return <primitive ref={meshRef} object={clonedScene} scale={1} />
 }
 
 useGLTF.preload('/logo.glb')

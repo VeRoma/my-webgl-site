@@ -11,7 +11,7 @@ export function GlobeGrid() {
     const { entered } = useIntro()
     const speedRef = useRef(0.05)
 
-    useFrame((state, delta) => {
+    useFrame((_, delta) => {
         if (meshRef.current) {
             // Плавный переход к новой скорости
             const targetSpeed = entered ? 0.033 : 0.05
@@ -41,7 +41,8 @@ export function GlobeGrid() {
                 color={neonColor}
                 toneMapped={false}
                 transparent={true}
-                opacity={0.1} // Чуть приглушил сетку, чтобы континенты были ярче
+                // ДЗЕН-МАТЕРИАЛИЗАЦИЯ: Делаем изначально полностью прозрачным
+                opacity={0} 
 
                 // Можно настроить толщину, но в большинстве браузеров она всё равно будет 1
                 linewidth={1}

@@ -1,21 +1,24 @@
 'use client'
 
 import { useGLTF } from '@react-three/drei'
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useMemo } from 'react'
 // import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { useIntro } from '../context/IntroContext'
+// import { useIntro } from '../context/IntroContext'
 
 export function GlobeModel() {
     // Загружаем твой файл
     const { scene } = useGLTF('/globe.glb')
     const meshRef = useRef<THREE.Group>(null)
-    const { entered } = useIntro()
-    const speedRef = useRef(0.05)
+    // const { entered } = useIntro()
+    // const speedRef = useRef(0.05)
+
+    // Клонируем сцену для независимой настройки материалов
+    const clonedScene = useMemo(() => scene.clone(), [scene])
 
     useLayoutEffect(() => {
         // Проходимся по всем объектам внутри файла
-        scene.traverse((obj) => {
+        clonedScene.traverse((obj) => {
             // Ищем именно линии (Line или LineSegments)
             if ((obj as THREE.Line).isLine || (obj as THREE.LineSegments).isLineSegments) {
                 const line = obj as THREE.Line
@@ -27,8 +30,9 @@ export function GlobeModel() {
                     // Здесь [0, 10, 20] даст мощный цианово-синий неон
                     color: new THREE.Color(0, 10, 40),
 
+                    // ДЗЕН-МАТЕРИАЛИЗАЦИЯ: Делаем изначально полностью прозрачным
                     transparent: true,
-                    opacity: 0.1,       // Легкая прозрачность
+                    opacity: 0,         
                     linewidth: 1,       // В WebGL толщина линий всегда 1 (это ограничение драйверов)
 
                     // САМОЕ ВАЖНОЕ: toneMapped={false}
@@ -37,7 +41,7 @@ export function GlobeModel() {
                 })
             }
         })
-    }, [scene])
+    }, [clonedScene])
 
     // Анимация: Медленное вращение Земли, синхронизированное с сеткой
     /*
@@ -53,7 +57,7 @@ export function GlobeModel() {
     return (
         <group ref={meshRef}>
             {/* scale={1.5} — Подбери размер, чтобы он был больше логотипа, но влезал в экран */}
-            <primitive object={scene} scale={0.045} />
+            <primitive object={clonedScene} scale={0.045} />
         </group>
     )
 }
