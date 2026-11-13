@@ -21,8 +21,8 @@ export function HeroAsset() {
 
         const handleInteract = (e: Event) => {
             if (e.type === 'wheel' && Math.abs((e as WheelEvent).deltaY) < 20) return
-            // ВРЕМЕННО ОТКЛЮЧАЕМ ПЕРЕХОД ПО КЛИКУ/СКРОЛЛУ ДЛЯ ОТЛАДКИ ГЛАВНОЙ СЦЕНЫ
-            // if (setEntered) setEntered(true)
+            // Enter the main scene on a click or a real scroll (UI buttons stop propagation)
+            setEntered(true)
         }
 
         const timer = setTimeout(() => {
