@@ -82,7 +82,7 @@ function SceneContent() {
             }}
         >
             {/* ДОБАВЛЯЕМ СЧЕТЧИК ПРОИЗВОДИТЕЛЬНОСТИ */}
-            <Stats className="!absolute !top-auto !bottom-6 !left-6" />
+            {process.env.NODE_ENV !== "production" && <Stats className="!absolute !top-auto !bottom-6 !left-6" />}
 
             <color attach="background" args={['#000000']} />
             <fog attach="fog" args={['#000000', 5, 20]} />

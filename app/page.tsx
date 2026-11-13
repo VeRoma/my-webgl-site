@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { Leva } from 'leva'
 
 import { IntroOverlay } from './components/IntroOverlay'
 import { UIOverlay } from './components/UIOverlay' // <-- ДОБАВЛЕНО
@@ -14,6 +15,8 @@ const Scene = dynamic(() => import('./components/Scene'), {
 export default function Home() {
   return (
     <main className="relative w-full h-screen overflow-hidden bg-black">
+      {/* Debug panel (GPGPU physics) only in development */}
+      <Leva hidden={process.env.NODE_ENV === 'production'} />
       <QualityProvider>
         <IntroProvider>
 

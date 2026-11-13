@@ -5,6 +5,7 @@ import { useLayoutEffect, useRef, useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useIntro } from '../context/IntroContext'
+import { globeState } from '../store/globeStore'
 
 export function GlobeModel() {
     // Загружаем твой файл
@@ -14,6 +15,7 @@ export function GlobeModel() {
     const { entered } = useIntro()
     const speedRef = useRef(0.05)
     const { viewport } = useThree()
+    const scale = viewport.aspect < 1 ? 0.03 : 0.045
 
     useLayoutEffect(() => {
         // Проходимся по всем объектам внутри файла
@@ -40,6 +42,8 @@ export function GlobeModel() {
             const targetSpeed = entered ? 0.033 : 0.05
             speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
             meshRef.current.rotation.y += delta * speedRef.current
+            globeState.spin = meshRef.current.rotation.y
+            globeState.scale = scale
 
             // ПЛАВНАЯ МАТЕРИАЛИЗАЦИЯ
             if (entered) {
@@ -55,8 +59,6 @@ export function GlobeModel() {
             }
         }
     })
-
-    const scale = viewport.aspect < 1 ? 0.03 : 0.045
 
     return (
         <group ref={meshRef}>
