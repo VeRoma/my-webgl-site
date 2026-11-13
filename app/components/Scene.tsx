@@ -1,16 +1,14 @@
 'use client'
 
 import { Canvas, useFrame } from '@react-three/fiber'
-import { OrbitControls, ContactShadows, Stats } from '@react-three/drei'
-import { Suspense, useRef, useState } from 'react'
+import { Stats, OrbitControls } from '@react-three/drei'
+import { Suspense, useRef } from 'react'
 import * as THREE from 'three'
 
 import { HeroAsset } from './HeroAsset'
 import { Effects } from './Effects'
 import { EnvironmentSetup } from './EnvironmentSetup'
 import { Lights } from './Lights'
-import { Platform } from './Platform'
-// import { CodeBackground } from './CodeBackground'
 import { RealStarsBackground } from './RealStarsBackground'
 import { RealStars } from './RealStars'
 import { useQuality } from '../context/QualityContext'
@@ -57,49 +55,23 @@ function CameraController() {
             enabled={!isFlying}
             enableDamping={true}
             dampingFactor={0.05}
-            enableZoom={false}
+            enableZoom={true}
+            minDistance={2}
+            maxDistance={50}
             minPolarAngle={0}
             maxPolarAngle={Math.PI}
         />
     )
 }
 
-function PlatformWrapper() {
-    const { entered } = useIntro()
-    const { shadows } = useQuality()
-
-    const platformRef = useRef<THREE.Group>(null)
-    const [unmounted, setUnmounted] = useState(false)
-
-    useFrame((_, delta) => {
-        if (entered && platformRef.current && !unmounted) {
-            platformRef.current.position.y -= 5 * delta
-            if (platformRef.current.position.y < -10) {
-                setUnmounted(true)
-            }
-        }
-    })
-
-    if (unmounted) return null
-
-    return (
-        <group ref={platformRef}>
-            <Platform />
-            {shadows && (
-                <ContactShadows frames={1} position={[0, -1.1, 0]} opacity={0.5} scale={10} blur={2.5} far={1} />
-            )}
-        </group>
-    )
-}
-
 function SceneContent() {
-    const { dpr, shadows } = useQuality()
+    const { dpr, shadows, postProcessing } = useQuality()
 
     return (
         <Canvas
             shadows={shadows}
             dpr={dpr}
-            camera={{ position: [0, 0, 4], fov: 50, near: 0.1 }}
+            camera={{ position: [0, 0, 15], fov: 50, near: 0.1 }}
             gl={{
                 antialias: true,
                 toneMapping: THREE.ACESFilmicToneMapping,
@@ -108,16 +80,11 @@ function SceneContent() {
             onCreated={(state) => {
                 state.gl.setClearColor('#000000')
             }}
-
-           
         >
-
             {/* ДОБАВЛЯЕМ СЧЕТЧИК ПРОИЗВОДИТЕЛЬНОСТИ */}
             <Stats className="!absolute !top-auto !bottom-6 !left-6" />
 
             <color attach="background" args={['#000000']} />
-
-            {/* Туман не будет влиять на звезды, так как мы отключили fog в их материалах */}
             <fog attach="fog" args={['#000000', 5, 20]} />
 
             <Lights />
@@ -131,18 +98,12 @@ function SceneContent() {
             {/* СЛОЙ 2: Реальные звезды (каталог) */}
             <RealStars />
 
-            {/* СЛОЙ 3: Матричный код */}
-            {/* <CodeBackground /> */}
-
-            {/* ОБЕРТКА ДЛЯ ПЛАТФОРМЫ */}
-            <PlatformWrapper />
-
             <Suspense fallback={null}><HeroAsset /></Suspense>
 
             <CameraController />
 
-            {/* СЛОЙ ЭФФЕКТОВ ПОСТ-ОБРАБОТКИ */}
-            <Effects />
+            {/* СЛОЙ ЭФФЕКТОВ ПОСТ-ОБРАБОТКИ (Монтируется только при включенном postProcessing) */}
+            {postProcessing && <Effects />}
         </Canvas>
     )
 }

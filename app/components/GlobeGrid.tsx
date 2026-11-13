@@ -8,22 +8,29 @@ import { useIntro } from '../context/IntroContext'
 
 export function GlobeGrid() {
     const meshRef = useRef<THREE.Mesh>(null)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const edgesRef = useRef<any>(null)
+    
     const { entered } = useIntro()
     const speedRef = useRef(0.05)
     const { viewport } = useThree()
 
-    useFrame((state, delta) => {
+    useFrame((_, delta) => {
         if (meshRef.current) {
             // Плавный переход к новой скорости
             const targetSpeed = entered ? 0.01 : 0.05
             speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
-            
             meshRef.current.rotation.y += delta * speedRef.current
+        }
+
+        // ПЛАВНАЯ МАТЕРИАЛИЗАЦИЯ СЕТКИ
+        if (entered && edgesRef.current && edgesRef.current.material) {
+            const mat = edgesRef.current.material as THREE.Material
+            mat.opacity = THREE.MathUtils.lerp(mat.opacity, 1, 0.5 * delta)
         }
     })
 
     // Наш ядерный синий цвет
-    // Используем те же значения, что и для континентов: [R=0, G=10, B=40]
     const neonColor = new THREE.Color(0, 10, 40)
     const scale = viewport.aspect < 1 ? 0.66 : 1
 
@@ -33,19 +40,14 @@ export function GlobeGrid() {
             <sphereGeometry args={[1, 36, 18]} />
             <meshBasicMaterial visible={false} />
 
-            {/* ИСПРАВЛЕНИЕ:
-         Мы убрали <lineBasicMaterial> изнутри.
-         Вместо этого передаем все настройки неона прямо в пропсы Edges.
-      */}
             <Edges
-                scale={0.4}     //
-                threshold={1}   //
+                ref={edgesRef}
+                scale={0.4}     
+                threshold={1}   
                 color={neonColor}
                 toneMapped={false}
                 transparent={true}
-                opacity={0.1} // Чуть приглушил сетку, чтобы континенты были ярче
-
-                // Можно настроить толщину, но в большинстве браузеров она всё равно будет 1
+                opacity={0} 
                 linewidth={1}
             />
         </mesh>

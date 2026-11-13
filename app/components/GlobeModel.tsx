@@ -23,30 +23,36 @@ export function GlobeModel() {
                 const line = obj as THREE.Line
 
                 // === МАГИЯ НЕОНА ===
-                // Мы создаем новый материал для линий
                 line.material = new THREE.LineBasicMaterial({
-                    // Цвет [R, G, B]. Значения выше 1.0 создают эффект свечения (Bloom)
-                    // Здесь [0, 10, 20] даст мощный цианово-синий неон
                     color: new THREE.Color(0, 10, 40),
-
                     transparent: true,
-                    opacity: 0.1,       // Легкая прозрачность
-                    linewidth: 1,       // В WebGL толщина линий всегда 1 (это ограничение драйверов)
-
-                    // САМОЕ ВАЖНОЕ: toneMapped={false}
-                    // Это говорит рендеру: "Не затемняй этот цвет, пусть он жжет экран!"
+                    opacity: 0,         
+                    linewidth: 1,
                     toneMapped: false,
                 })
             }
         })
     }, [clonedScene])
 
-    // Анимация: Медленное вращение Земли, синхронизированное с сеткой
-    useFrame((state, delta) => {
+    // Анимация: Медленное вращение Земли и плавное появление
+    useFrame((_, delta) => {
         if (meshRef.current) {
             const targetSpeed = entered ? 0.033 : 0.05
             speedRef.current = THREE.MathUtils.lerp(speedRef.current, targetSpeed, 2 * delta)
             meshRef.current.rotation.y += delta * speedRef.current
+
+            // ПЛАВНАЯ МАТЕРИАЛИЗАЦИЯ
+            if (entered) {
+                clonedScene.traverse((obj) => {
+                    if ((obj as THREE.Line).isLine || (obj as THREE.LineSegments).isLineSegments) {
+                        const line = obj as THREE.Line
+                        if (line.material) {
+                            const mat = line.material as THREE.LineBasicMaterial
+                            mat.opacity = THREE.MathUtils.lerp(mat.opacity, 1, 0.5 * delta)
+                        }
+                    }
+                })
+            }
         }
     })
 
@@ -54,11 +60,9 @@ export function GlobeModel() {
 
     return (
         <group ref={meshRef}>
-            {/* Масштаб адаптивен в зависимости от ширины экрана */}
             <primitive object={clonedScene} scale={scale} />
         </group>
     )
 }
 
-// Предзагрузка, чтобы не было задержек
 useGLTF.preload('/globe.glb')
